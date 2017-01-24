@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 void eval(char *cmdLine) 
 {
     // if cmdLine is quit then quit
-    printf("cmdLine = %s\n",cmdLine);
+    printf("cmdLine = %s",cmdLine);
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     parseLine(cmdLine,argv);
@@ -255,7 +255,7 @@ int parseLine(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    // if it is a bulit i command run it here and return 1
+    // if it is a bulit in command run it here and return 1
     // if not retunr 0 to tell eval that it must run it there
     int ranSomething = 0;
     if(!strcmp("quit",argv[0])){
@@ -264,6 +264,9 @@ int builtin_cmd(char **argv)
        ranSomething = 1;
       
     }
+    if(!strcmp("quit",argv[0])){
+    }
+    
     return ranSomething;     /* not a builtin command */
 }
 
