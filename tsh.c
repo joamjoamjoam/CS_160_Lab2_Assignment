@@ -1,7 +1,11 @@
 /* 
  * tsh - A tiny shell program with job control
  * 
- * <Put your name and ID here>
+ * Trent Callan 
+ * SID: 861117907
+ *
+ * 2017 Copyright Trent Callan
+ * This is my unique code written fully by the named above and is not to be used in any other way.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,7 +69,7 @@ void sigtstp_handler(int sig);
 void sigint_handler(int sig);
 
 /* Here are helper routines that we've provided for you */
-int parseline(const char *cmdline, char **argv); 
+int parseLine(const char *cmdline, char **argv); 
 void sigquit_handler(int sig);
 
 void clearjob(struct job_t *job);
@@ -163,8 +167,28 @@ int main(int argc, char **argv)
  * background children don't receive SIGINT (SIGTSTP) from the kernel
  * when we type ctrl-c (ctrl-z) at the keyboard.  
 */
-void eval(char *cmdline) 
+void eval(char *cmdLine) 
 {
+    // if cmdLine is quit then quit
+    printf("cmdLine = %s",cmdLine);
+    char* argv[MAXARGS];
+    char commandName[MAXLINE];
+    parseLine(cmdLine,argv);
+    strcpy(commandName,argv[0]);
+    
+    printf("ParsedCommandName = %s", commandName);
+    
+    if(strcmp("",commandName)){ // strcmp return 0 if equal
+       // check for built in commands
+       if(builtin_cmd(argv)){
+          printf("%s ran by builtin_cmd not eval",commandName);
+       }
+       else{
+          printf("%s is being run by eval",commandName);
+
+       }
+    }
+    
     return;
 }
 
@@ -175,7 +199,7 @@ void eval(char *cmdline)
  * argument.  Return true if the user has requested a BG job, false if
  * the user has requested a FG job.  
  */
-int parseline(const char *cmdline, char **argv) 
+int parseLine(const char *cmdline, char **argv) 
 {
     static char array[MAXLINE]; /* holds local copy of command line */
     char *buf = array;          /* ptr that traverses command line */
@@ -231,7 +255,16 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
-    return 0;     /* not a builtin command */
+    // if it is a bulit i command run it here and return 1
+    // if not retunr 0 to tell eval that it must run it there
+    int ranSomething = 0;
+    if(strcmp("quit",argv[0])){
+       printf("Running Quit in builtin_cmd")
+       exit(0);
+       ranSomething = 1;
+      
+    }
+    return ranSomething;     /* not a builtin command */
 }
 
 /* 
