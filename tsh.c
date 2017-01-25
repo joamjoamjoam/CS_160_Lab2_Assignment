@@ -187,7 +187,7 @@ void eval(char *cmdLine)
         debugLog("Command Line is Empty\n");
         return;
     }
-    assert(!strcmp("\n", cmdLine) && "commandLine must not be empty");
+    assert(strcmp("\n", cmdLine) && "commandLine must not be empty");
     
     debugLog("cmdLine = %s",cmdLine);
     
