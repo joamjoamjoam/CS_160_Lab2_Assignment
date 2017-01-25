@@ -42,7 +42,7 @@
  */
 
 // my debug verbose function
-#if 1 // set to true to enable debug logs
+#if 0 // set to true to enable debug logs
     #define debugLog(a) printf a
 #else
     #define debugLog(a) (void)0
