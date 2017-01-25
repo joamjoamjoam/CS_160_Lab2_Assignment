@@ -214,6 +214,12 @@ void eval(char *cmdLine)
                 }
                 
                 
+                execve(commandName, argv, environ);
+                printf("%s: Command Not Found\n",commandName);
+                exit(1);
+                
+            }
+            else{
                 if (runInBackground) {
                     printf("backgrounded pid:%d process:%s",childPid,commandName);
                     addjob(&newJob, getpid(), BG, cmdLine);
@@ -222,10 +228,6 @@ void eval(char *cmdLine)
                     addjob(&newJob, getpid(), FG, cmdLine);
                     waitpid(childPid, &returnedStatus, 0);
                 }
-                execve(commandName, argv, environ);
-                printf("%s: Command Not Found\n",commandName);
-                exit(1);
-                
             }
         }
     }
