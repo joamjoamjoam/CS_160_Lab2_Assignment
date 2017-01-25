@@ -118,7 +118,6 @@ int main(int argc, char **argv)
                 break;
             case 'v':             /* emit additional diagnostic info */
                 verbose = 1;
-                printf("i was set\n");
                 debugLog = &printf;
                 break;
             case 'p':             /* don't print a prompt */
