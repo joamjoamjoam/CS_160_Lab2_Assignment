@@ -328,12 +328,15 @@ int builtin_cmd(char **argv)
     }
     else if(!strcmp("bg",argv[0])){
         do_bgfg(argv);
+        ranSomething = 1;
     }
     else if(!strcmp("fg",argv[0])){
         do_bgfg(argv);
+        ranSomething = 1;
     }
     else if(!strcmp("jobs",argv[0])){
         listjobs(jobs);
+        ranSomething = 1;
     }
     
     return ranSomething;     /* not a builtin command */
