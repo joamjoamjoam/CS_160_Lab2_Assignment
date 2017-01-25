@@ -369,7 +369,7 @@ void waitfg(pid_t pid){
 void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
-        int* returnedStatus;
+        int returnedStatus;
         pid_t signalingPID = wait(&returnedStatus);
         debugLog("SIGCHLD recieved from pid: ", signalingPID);
         
