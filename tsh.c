@@ -348,8 +348,28 @@ void do_bgfg(char **argv)
  * waitfg - Block until process pid is no longer the foreground process based on job list
  */
 void waitfg(pid_t pid){
-
-    waitpid(pid, NULL, WUNTRACED);
+    int returnedStatus;
+    int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
+    
+    if (WIFEXITED(returnedStatus)){
+        // process terminated by exit clean up child by killig it
+        debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+        deletejob(jobs, signalingPID);
+        kill(signalingPID, SIGKILL);
+    }
+    else if(WIFSIGNALED(returnedStatus)){
+        // terminated by a signal
+        int signal = WTERMSIG(returnedStatus);
+        debugLog("FG Process %d killed by %d signal\n", signalingPID,signal);
+        deletejob(jobs, signalingPID);
+        kill(signalingPID, SIGKILL);
+    }
+    else if (WIFSTOPPED(returnedStatus)){
+        debugLog("FG process %d was stopped.\n", signalingPID);
+    }
+    else{
+        debugLog("FG process %d terminated wierdly\n", signalingPID);
+    }
     return;
 }
 
@@ -368,31 +388,34 @@ void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
         int returnedStatus;
-        pid_t signalingPID = wait(&returnedStatus);
-        debugLog("SIGCHLD recieved from pid: \n", signalingPID);
-        
-        if (WIFEXITED(returnedStatus)){
-            // process terminated by exit
-            debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
-            deletejob(jobs, signalingPID);
+        int signalingPID = 0;
+        while ((signalingPID = waitpid(-1, &returnedStatus, WNOHANG))) {
+            debugLog("SIGCHLD recieved from pid: \n", signalingPID);
+            
+            if (WIFEXITED(returnedStatus)){
+                // process terminated by exit clean up child by killig it
+                debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+                deletejob(jobs, signalingPID);
+                kill(signalingPID, SIGKILL);
+            }
+            else if(WIFSIGNALED(returnedStatus)){
+                // terminated by a signal
+                int signal = WTERMSIG(returnedStatus);
+                debugLog("Child %d killed by %d signal\n", signalingPID,signal);
+                deletejob(jobs, signalingPID);
+                kill(signalingPID, SIGKILL);
+            }
+            else if (WIFSTOPPED(returnedStatus)){
+                debugLog("Child %d was stopped.\n", signalingPID);
+                struct job_t* tmp = getjobpid(jobs, signalingPID);
+                tmp->state = ST;
+            }
+            else{
+                debugLog("Child %d terminated wierdly\n", signalingPID);
+                kill(signalingPID, SIGKILL);
+            }
+
         }
-        else if(WIFSIGNALED(returnedStatus)){
-            // terminated by a signal
-            int signal = WTERMSIG(returnedStatus);
-            debugLog("Child %d killed by %d signal\n", signalingPID,signal);
-            deletejob(jobs, signalingPID);
-        }
-        else if (WIFSTOPPED(returnedStatus)){
-            debugLog("Child %d was stopped.\n", signalingPID);
-            struct job_t* tmp = getjobpid(jobs, signalingPID);
-            tmp->state = ST;
-        }
-        else{
-            debugLog("Child %d terminated wierdly\n", signalingPID);
-        }
-        
-        // kill all zombie children and
-    }
     return;
 }
 
