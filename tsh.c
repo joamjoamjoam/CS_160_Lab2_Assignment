@@ -421,9 +421,23 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig)
 {
     if (sig == SIGSTOP){
+        printf("\n");
         debugLog("User Pressed ctrl-z\n");
-        debugLog("Stopping FG process");
+        debugLog("Stopping Foreground job\n");
         
+        pid_t fgPID = fgpid(jobs);
+        debugLog("fgPID = %d",fgPID);
+        if (fgPID > 0) {
+            kill(fgPID,SIGINT);
+            debugLog("Forwarded SIGSTOP to pid: %d\n", fgPID);
+            struct job_t* tmp = getjobpid(jobs, fgPID);
+            tmp->state = ST;
+        }
+        else{
+            debugLog("No fg process ignoring SIGSTOP\n");
+        }
+        printf("%s",prompt);
+        fflush(stdout);
     }
     return;
 }
