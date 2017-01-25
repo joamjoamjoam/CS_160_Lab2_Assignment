@@ -232,7 +232,7 @@ void eval(char *cmdLine)
                 
                 execve(commandName, argv, environ);
                 printf("%s: Command Not Found\n",commandName);
-                exit(1); 
+                exit(1);
                 
             }
             else{
@@ -366,9 +366,12 @@ void waitfg(pid_t pid){
     }
     else if (WIFSTOPPED(returnedStatus)){
         debugLog("FG process %d was stopped.\n", signalingPID);
+        struct job_t* tmp = getjobpid(jobs, signalingPID);
+        tmp->state = ST;
     }
     else{
         debugLog("FG process %d terminated wierdly\n", signalingPID);
+        kill(signalingPID, SIGKILL);
     }
     return;
 }
@@ -414,9 +417,10 @@ void sigchld_handler(int sig)
                 debugLog("Child %d terminated wierdly\n", signalingPID);
                 kill(signalingPID, SIGKILL);
             }
-
+            
         }
-    return;
+        return;
+    }
 }
 
 /*
