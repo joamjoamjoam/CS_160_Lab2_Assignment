@@ -541,7 +541,7 @@ void sigtstp_handler(int sig)
         debugLog("fgPID = %d\n",fgPID);
         if (fgPID > 0) {
             // first bg the fg process then stop it otherwise term never gets control back
-            kill(fgPID,SIGTSTP);
+            kill(fgPID,SIGSTOP);
             debugLog("Forwarded SIGTSTP to pid: %d\n", fgPID);
             struct job_t* tmp = getjobpid(jobs, fgPID);
             tmp->state = ST;
