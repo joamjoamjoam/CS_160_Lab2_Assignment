@@ -400,7 +400,7 @@ void sigchld_handler(int sig)
     if (sig == SIGCHLD){
         int returnedStatus;
         int signalingPID = 0;
-        while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG))) {
+        while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG)) > 0) {
             debugLog("SIGCHLD recieved from pid: \n", signalingPID);
             fflush(stdout);
             
