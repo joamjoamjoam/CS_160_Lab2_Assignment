@@ -354,12 +354,22 @@ void waitfg(pid_t pid)
     pid_t exitedId = waitpid(fgId, &returnedStatus, WUNTRACED);
     
     if (WIFEXITED(returnedStatus)){
+        // process terminated by exit
         debugLog("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
+        deletejob(jobs, exitedId);
+    }
+    else if(WIFSIGNALED(returnedStatus)){
+        // terminated by a signal
+        int signal = WTERMSIG(returnedStatus);
+        debugLog("Child %d killed by %d signal\n", exitedId,signal);
+        deletejob(jobs, exitedId);
+    }
+    else if (WIFSTOPPED(returnedStatus)){
+        debugLog("Child %d was stopped.\n", exitedId);
     }
     else{
         debugLog("Child %d terminated wierdly\n", exitedId);
     }
-    deletejob(jobs, exitedId); // deletes fg process
     return;
 }
 
@@ -377,8 +387,9 @@ void waitfg(pid_t pid)
 void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
-        debugLog("SIGCHLD recieved\n");
-        // kill all zombie children and delete it from the jobs list if not fg process
+        pid_t signalingPID = wait(NULL);
+        debugLog("SIGCHLD recieved from pid: %d\n",signalingPID);
+        // kill all zombie children and
     }
     return;
 }
