@@ -387,8 +387,9 @@ void waitfg(pid_t pid)
 void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
+        debugLog("SIGCHLD recieved ");
         pid_t signalingPID = wait(NULL);
-        debugLog("SIGCHLD recieved from pid: %d\n",signalingPID);
+        debugLog("from pid: %d\n",signalingPID);
         // kill all zombie children and
     }
     return;
