@@ -184,8 +184,8 @@ int main(int argc, char **argv)
 void eval(char *cmdLine)
 {
     debugLog("cmdLine = %s",cmdLine);
-    if (!strcmp("", cmdLine)) {
-        // commandLine is empty
+    if (!strcmp("\n", cmdLine)) {
+        debugLog("Command Line is Empty.");
         return;
     }
     assert(cmdLine != NULL && "commandLine must not be empty");
