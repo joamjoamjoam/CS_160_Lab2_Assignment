@@ -214,7 +214,7 @@ void eval(char *cmdLine)
                 
                 execve(commandName, argv, environ);
                 printf("%s: Command Not Found\n",commandName);
-                exit(1);
+                exit(1); 
                 
             }
             else{
