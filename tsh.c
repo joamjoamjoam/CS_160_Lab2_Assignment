@@ -353,10 +353,12 @@ void do_bgfg(char **argv)
 void waitfg(pid_t pid){
     int returnedStatus;
     int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
+    fflush(stdout);
     
     if (WIFEXITED(returnedStatus)){
         // process terminated by exit clean up child by killig it
         debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+        fflush(stdout);
         deletejob(jobs, signalingPID);
         kill(signalingPID, SIGTERM);
     }
@@ -364,16 +366,19 @@ void waitfg(pid_t pid){
         // terminated by a signal
         int signal = WTERMSIG(returnedStatus);
         debugLog("FG Process %d killed by %d signal\n", signalingPID,signal);
+        fflush(stdout);
         deletejob(jobs, signalingPID);
         kill(signalingPID, SIGTERM);
     }
     else if (WIFSTOPPED(returnedStatus)){
         debugLog("FG process %d was stopped.\n", signalingPID);
+        fflush(stdout);
         struct job_t* tmp = getjobpid(jobs, signalingPID);
         tmp->state = ST;
     }
     else{
         debugLog("FG process %d terminated wierdly\n", signalingPID);
+        fflush(stdout);
         kill(signalingPID, SIGTERM);
     }
     return;
@@ -397,10 +402,12 @@ void sigchld_handler(int sig)
         int signalingPID = 0;
         while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG))) {
             debugLog("SIGCHLD recieved from pid: \n", signalingPID);
+            fflush(stdout);
             
             if (WIFEXITED(returnedStatus)){
                 // process terminated by exit clean up child by killig it
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+                fflush(stdout);
                 deletejob(jobs, signalingPID);
                 kill(signalingPID, SIGTERM);
             }
@@ -408,16 +415,19 @@ void sigchld_handler(int sig)
                 // terminated by a signal
                 int signal = WTERMSIG(returnedStatus);
                 debugLog("Child %d killed by %d signal\n", signalingPID,signal);
+                fflush(stdout);
                 deletejob(jobs, signalingPID);
                 kill(signalingPID, SIGTERM);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
+                fflush(stdout);
                 struct job_t* tmp = getjobpid(jobs, signalingPID);
                 tmp->state = ST;
             }
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
+                fflush(stdout);
                 kill(signalingPID, SIGTERM);
             }
             
