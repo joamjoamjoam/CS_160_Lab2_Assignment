@@ -221,7 +221,7 @@ void eval(char *cmdLine)
                 // parent process
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
-                    printf("[%d] (%d) %s\n", pid2jid(childPid), childPid, cmdLine);
+                    printf("[%d] (%d) %s", pid2jid(childPid), childPid, cmdLine);
                 }
                 else{
                     addjob(jobs, childPid, FG, cmdLine);
