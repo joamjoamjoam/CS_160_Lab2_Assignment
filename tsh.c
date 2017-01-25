@@ -301,7 +301,7 @@ int builtin_cmd(char **argv)
     // if not retunr 0 to tell eval that it must run it there
     int ranSomething = 0;
     if(!strcmp("quit",argv[0])){
-        printf("Running Quit in builtin_cmd\n");
+        //printf("Running Quit in builtin_cmd\n");
         exit(0);
         
     }
