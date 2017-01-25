@@ -196,6 +196,24 @@ void eval(char *cmdLine)
                 
                 if((childPid = fork()) == 0){
                     // child process
+                    char* iterator = commandName;
+                    int addBin = 0;
+                    
+                    while (*iterator)
+                    {
+                        if (strchr("/", *iterator))
+                        {
+                            // command name contains a slash
+                            addBin = 1;
+                        }
+                        
+                        iterator++;
+                    }
+                    
+                    if (addBin) {
+                        sprintf(commandName, "/bin/%s",commandName);
+                    }
+                    
                     addjob(&newJob, getpid(), FG, cmdLine);
                     execve(commandName, argv, environ);
                     printf("%s: Command Not Found\n",commandName);
