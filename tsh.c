@@ -377,6 +377,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig)
 {
+    debugLog("User Pressed ctrl-c");
     return;
 }
 
