@@ -198,6 +198,7 @@ void eval(char *cmdLine)
                     // child process
                     addjob(&newJob, getpid(), FG, cmdLine);
                     execve(commandName, argv, environ);
+                    printf("This only runs if exec fails\n");
                     
                 }
                 else{
