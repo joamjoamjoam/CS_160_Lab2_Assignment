@@ -327,10 +327,10 @@ int builtin_cmd(char **argv)
         
     }
     else if(!strcmp("bg",argv[0])){
-        // call do_bgfg
+        do_bgfg(argv);
     }
     else if(!strcmp("fg",argv[0])){
-        // call do_bgfg
+        do_bgfg(argv);
     }
     else if(!strcmp("jobs",argv[0])){
         listjobs(jobs);
@@ -344,6 +344,64 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv)
 {
+    char commandName[MAXLINE];
+    strcpy(commandName, argv[0]);
+    int jidToStateChange =  atoi(argv[1]);
+    struct job_t* jobToChange = getjobpid(jobs, jidToStateChange);
+    
+    if (!jobToChange) {
+        return;
+    }
+    pid_t pidToStateChange = jobToChange->pid;
+    
+    assert(jobToChange && "pid must exist in jobs");
+    
+    debugLog("%sing (%d) from previous state %d",commandName,jidToStateChange,jobToChange->state);
+    
+    if (!strcmp("fg", commandName)) {
+        // foreground process
+        struct job_t* fgJob = getjobjid(jobs,jidToStateChange);
+        
+        if (jobToChange->state == ST) {
+            // change fg job to BG state to allow new process to have FG state
+            fgJob->state = BG;
+            jobToChange->state = FG;
+            int test = fgpid(jobs);
+            assert(!test && "There can only be one FG job");
+            kill(pidToStateChange, SIGCONT); // restart process
+            waitfg(pidToStateChange);
+            
+            // new process terminated so we have to fg fg process
+            fgJob->state = FG;
+            // then fg it
+        }
+        else if(jobToChange->state == BG){
+            // foreground process first
+            fgJob->state = BG;
+            jobToChange->state = FG;
+            int test = fgpid(jobs);
+            assert(!test && "There can only be one FG job");
+            waitfg(pidToStateChange);
+            
+            // new process terminated so we have to fg fg process
+            fgJob->state = FG;
+        }
+        else{
+            // state = FG do nothing
+        }
+    }
+    else{
+        // background process
+        if (jobToChange->state == ST) {
+            kill(pidToStateChange, SIGCONT);
+        }
+        else{
+            // state = BG or FG do nothing
+        }
+        jobToChange->state = BG;
+    }
+    
+    
     return;
 }
 
