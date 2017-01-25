@@ -368,6 +368,9 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig)
 {
+    if (sig == SIGCHLD){
+        debugLog("SIGCHLD recieved\n");
+    }
     return;
 }
 
@@ -380,7 +383,18 @@ void sigint_handler(int sig)
 {
     if (sig == SIGINT){
         debugLog("User Pressed ctrl-c\n");
+        debugLog("Killing Foreground job");
+        pid_t fgPID = fgpid(jobs);
+        if (fgPID > 0) {
+            kill(fgPID,SIGINT);
+            debugLog("Forwarded SIGINT to pid: %d", fgPID);
+            deletejob(jobs, fgPID);
+        }
+        else{
+            debugLog("No fg process ignoring SIGINT");
+        }
     }
+    
     return;
 }
 
@@ -391,6 +405,9 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig)
 {
+    if (sig == SIGSTOP){
+        debugLog("User Pressed ctrl-z\n");
+    }
     return;
 }
 
