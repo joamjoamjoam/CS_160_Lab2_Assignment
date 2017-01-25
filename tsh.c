@@ -211,7 +211,7 @@ void eval(char *cmdLine)
                     }
                     
                     if (!absPath) {
-                        sprintf(commandName, "/bin/%s",commandName);
+                        sprintf(commandName, "/bin/%s",argv[0]);
                     }
                     
                     addjob(&newJob, getpid(), FG, cmdLine);
