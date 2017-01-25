@@ -221,11 +221,11 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 if (runInBackground) {
+                    addjob(&newJob, childPid, BG, cmdLine);
                     printf("[%d] pid:%d process:%s\n", pid2jid(childPid), childPid,commandName);
-                    addjob(&newJob, getpid(), BG, cmdLine);
                 }
                 else{
-                    addjob(&newJob, getpid(), FG, cmdLine);
+                    addjob(&newJob, childPid, FG, cmdLine);
                     waitfg(childPid);
                 }
             }
