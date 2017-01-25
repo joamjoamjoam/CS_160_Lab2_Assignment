@@ -370,7 +370,7 @@ void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
         int* returnedStatus;
-        pid_t signalingPID = wait(returnedStatus);
+        pid_t signalingPID = wait(&returnedStatus);
         debugLog("SIGCHLD recieved from pid: ", signalingPID);
         
         if (WIFEXITED(returnedStatus)){
