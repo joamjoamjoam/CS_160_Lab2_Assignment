@@ -190,7 +190,6 @@ void eval(char *cmdLine)
             // is process running in the background?
             
             // run process in background and dont hold shell
-            struct job_t newJob;
             
             if((childPid = fork()) == 0){
                 // child process
@@ -221,12 +220,12 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 if (runInBackground) {
-                    addjob(&newJob, childPid, BG, cmdLine);
+                    addjob(jobs, childPid, BG, cmdLine);
                     listjobs(jobs);
                     printf("[%d] pid:%d process:%s\n", pid2jid(childPid), childPid, cmdLine);
                 }
                 else{
-                    addjob(&newJob, childPid, FG, cmdLine);
+                    addjob(jobs, childPid, FG, cmdLine);
                     waitfg(childPid);
                 }
             }
