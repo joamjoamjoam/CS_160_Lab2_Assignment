@@ -383,8 +383,6 @@ void sigint_handler(int sig)
 {
     if (sig == SIGINT){
         debugLog("User Pressed ctrl-c\n");
-        char c;
-        while((c = getchar()) != '\n' && c != EOF);
         debugLog("Killing Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
