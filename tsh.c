@@ -333,7 +333,7 @@ void waitfg(pid_t pid)
     pid_t exitedId = waitpid(fgId, &returnedStatus, 0);
     
     if (WIFEXITED(returnedStatus)){
-        printf("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
+        //printf("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
     }
     else{
         printf("Child %d terminated wierdly\n", exitedId);
