@@ -7,6 +7,7 @@
  * 2017 Copyright Trent Callan
  * This is my unique code written fully by the named above and is not to be used in any other way.
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -29,6 +30,7 @@
 #define BG 2    /* running in background */
 #define ST 3    /* stopped */
 
+
 /*
  * Jobs states: FG (foreground), BG (background), ST (stopped)
  * Job state transitions and enabling actions:
@@ -38,6 +40,15 @@
  *     BG -> FG  : fg command
  * At most 1 job can be in the FG state.
  */
+
+// my debug verbose function
+#if 1 // set to true to enable debug logs
+    #define debugLog(a) printf a
+#else
+    #define debugLog(a) (void)0
+#endif
+
+
 
 /* Global variables */
 extern char **environ;      /* defined in libc */
@@ -172,14 +183,14 @@ int main(int argc, char **argv)
 void eval(char *cmdLine)
 {
     // if cmdLine is quit then quit
-    //printf("cmdLine = %s",cmdLine);
+    debugLog(("cmdLine = %s",cmdLine));
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
     int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
-    //printf("ParsedCommandName = %s\n", commandName);
+    debugLog(("ParsedCommandName = %s\n", commandName));
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
@@ -301,7 +312,7 @@ int builtin_cmd(char **argv)
     // if not retunr 0 to tell eval that it must run it there
     int ranSomething = 0;
     if(!strcmp("quit",argv[0])){
-        //printf("Running Quit in builtin_cmd\n");
+        debugLog(("Running Quit in builtin_cmd\n"));
         exit(0);
         
     }
@@ -336,10 +347,10 @@ void waitfg(pid_t pid)
     pid_t exitedId = waitpid(fgId, &returnedStatus, 0);
     
     if (WIFEXITED(returnedStatus)){
-        //printf("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
+        debugLog(("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus)));
     }
     else{
-        printf("Child %d terminated wierdly\n", exitedId);
+        debugLog(("Child %d terminated wierdly\n", exitedId));
     }
     deletejob(jobs, exitedId);
     return;
