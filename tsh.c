@@ -358,14 +358,14 @@ void waitfg(pid_t pid){
         // process terminated by exit clean up child by killig it
         debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
         deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGKILL);
+        kill(signalingPID, SIGTERM);
     }
     else if(WIFSIGNALED(returnedStatus)){
         // terminated by a signal
         int signal = WTERMSIG(returnedStatus);
         debugLog("FG Process %d killed by %d signal\n", signalingPID,signal);
         deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGKILL);
+        kill(signalingPID, SIGTERM);
     }
     else if (WIFSTOPPED(returnedStatus)){
         debugLog("FG process %d was stopped.\n", signalingPID);
@@ -374,7 +374,7 @@ void waitfg(pid_t pid){
     }
     else{
         debugLog("FG process %d terminated wierdly\n", signalingPID);
-        kill(signalingPID, SIGKILL);
+        kill(signalingPID, SIGTERM);
     }
     return;
 }
@@ -402,14 +402,14 @@ void sigchld_handler(int sig)
                 // process terminated by exit clean up child by killig it
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 deletejob(jobs, signalingPID);
-                kill(signalingPID, SIGKILL);
+                kill(signalingPID, SIGTERM);
             }
             else if(WIFSIGNALED(returnedStatus)){
                 // terminated by a signal
                 int signal = WTERMSIG(returnedStatus);
                 debugLog("Child %d killed by %d signal\n", signalingPID,signal);
                 deletejob(jobs, signalingPID);
-                kill(signalingPID, SIGKILL);
+                kill(signalingPID, SIGTERM);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
@@ -418,7 +418,7 @@ void sigchld_handler(int sig)
             }
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
-                kill(signalingPID, SIGKILL);
+                kill(signalingPID, SIGTERM);
             }
             
         }
