@@ -42,8 +42,9 @@
  */
 
 // my debug verbose function
+inline int doNothing(char const* format,...){ return 0; };
 
-int (*debugLog)(char const *,...);
+int (*debugLog)(char const *,...) = &doNothing;
 
 
 
@@ -377,7 +378,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig)
 {
-    debugLog("User Pressed ctrl-c");
+    debugLog("User Pressed ctrl-c\n");
     return;
 }
 
