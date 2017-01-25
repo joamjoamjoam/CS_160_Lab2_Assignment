@@ -386,10 +386,10 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig)
 {
+    pid_t signalingPID = wait(NULL);
     if (sig == SIGCHLD){
         debugLog("SIGCHLD recieved ");
-        fflush(stdout);
-        pid_t signalingPID = wait(NULL);
+        
         debugLog("from pid: %d\n",signalingPID);
         // kill all zombie children and
     }
