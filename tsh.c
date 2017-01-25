@@ -42,11 +42,8 @@
  */
 
 // my debug verbose function
-#if 0 // set to true to enable debug logs
-    #define debugLog(a) printf a
-#else
-    #define debugLog(a) (void)0
-#endif
+
+int (*debugLog)(char const *,...);
 
 
 
@@ -121,6 +118,7 @@ int main(int argc, char **argv)
                 break;
             case 'v':             /* emit additional diagnostic info */
                 verbose = 1;
+                debugLog = &printf;
                 break;
             case 'p':             /* don't print a prompt */
                 emit_prompt = 0;  /* handy for automatic testing */
@@ -163,8 +161,8 @@ int main(int argc, char **argv)
         fflush(stdout);
         fflush(stdout);
     }
-    
-    exit(0); /* control never reaches here */
+    // removing control never reaches warning
+    //exit(0); /* control never reaches here */
 }
 
 #pragma mark User Implemented Functions
@@ -183,14 +181,14 @@ int main(int argc, char **argv)
 void eval(char *cmdLine)
 {
     // if cmdLine is quit then quit
-    debugLog(("cmdLine = %s",cmdLine));
+    debugLog("cmdLine = %s",cmdLine);
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
     int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
-    debugLog(("ParsedCommandName = %s\n", commandName));
+    debugLog("ParsedCommandName = %s\n", commandName);
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
@@ -347,10 +345,10 @@ void waitfg(pid_t pid)
     pid_t exitedId = waitpid(fgId, &returnedStatus, 0);
     
     if (WIFEXITED(returnedStatus)){
-        debugLog(("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus)));
+        debugLog("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
     }
     else{
-        debugLog(("Child %d terminated wierdly\n", exitedId));
+        debugLog("Child %d terminated wierdly\n", exitedId);
     }
     deletejob(jobs, exitedId);
     return;
