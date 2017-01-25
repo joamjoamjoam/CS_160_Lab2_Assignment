@@ -176,7 +176,6 @@ void eval(char *cmdLine)
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
-    int returnedStatus;
     int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
@@ -222,7 +221,7 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 if (runInBackground) {
-                    printf("backgrounded pid:%d process:%s",childPid,commandName);
+                    printf("backgrounded pid:%d process:%s\n",childPid,commandName);
                     addjob(&newJob, getpid(), BG, cmdLine);
                 }
                 else{
