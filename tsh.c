@@ -199,6 +199,7 @@ void eval(char *cmdLine)
                     addjob(&newJob, getpid(), FG, cmdLine);
                     execve(commandName, argv, environ);
                     printf("This only runs if exec fails\n");
+                    exit(1);
                     
                 }
                 else{
