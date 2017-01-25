@@ -213,7 +213,10 @@ void eval(char *cmdLine)
                 // child process
                 char* iterator = commandName;
                 int absPath = 0;
-                
+                // install signal handlers to child process.
+                Signal(SIGINT,  sigint_handler);
+                Signal(SIGTSTP, sigtstp_handler);
+                Signal(SIGCHLD, sigchld_handler);
                 while (*iterator)
                 {
                     if (strchr("/", *iterator))
@@ -392,7 +395,7 @@ void sigchld_handler(int sig)
     if (sig == SIGCHLD){
         int returnedStatus;
         int signalingPID = 0;
-        while ((signalingPID = waitpid(-1, &returnedStatus, WNOHANG))) {
+        while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG))) {
             debugLog("SIGCHLD recieved from pid: \n", signalingPID);
             
             if (WIFEXITED(returnedStatus)){
