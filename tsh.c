@@ -221,7 +221,7 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 if (runInBackground) {
-                    printf("backgrounded pid:%d process:%s\n",childPid,commandName);
+                    printf("[%d] pid:%d process:%s\n", pid2jid(childPid), childPid,commandName);
                     addjob(&newJob, getpid(), BG, cmdLine);
                 }
                 else{
