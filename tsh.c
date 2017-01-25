@@ -176,6 +176,7 @@ void eval(char *cmdLine)
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
+    int returnedStatus;
     int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
@@ -188,44 +189,42 @@ void eval(char *cmdLine)
         }
         else{
             // is process running in the background?
-            if (runInBackground) {
-                // run process in background and dont hold shell
-                //printf("%s is being run by eval in bg\n",commandName);
-            }
-            else{
-                //printf("%s is being run by eval in fg\n",commandName);
-                struct job_t newJob;
+            
+            // run process in background and dont hold shell
+            struct job_t newJob;
+            
+            if((childPid = fork()) == 0){
+                // child process
+                char* iterator = commandName;
+                int absPath = 0;
                 
-                if((childPid = fork()) == 0){
-                    // child process
-                    char* iterator = commandName;
-                    int absPath = 0;
-                    
-                    while (*iterator)
+                while (*iterator)
+                {
+                    if (strchr("/", *iterator))
                     {
-                        if (strchr("/", *iterator))
-                        {
-                            // command name contains a slash
-                            absPath = 1;
-                        }
-                        
-                        iterator++;
+                        // command name contains a slash
+                        absPath = 1;
                     }
                     
-                    if (!absPath) {
-                        sprintf(commandName, "/bin/%s",argv[0]);
-                    }
-                    
-                    addjob(&newJob, getpid(), FG, cmdLine);
-                    execve(commandName, argv, environ);
-                    printf("%s: Command Not Found\n",commandName);
-                    exit(1);
-                    
+                    iterator++;
+                }
+                
+                if (!absPath) {
+                    sprintf(commandName, "/bin/%s",argv[0]);
+                }
+                
+                
+                if (runInBackground) {
+                    printf("backgrounded pid:%d process:%s",childPid,commandName);
+                    addjob(&newJob, getpid(), BG, cmdLine);
                 }
                 else{
-                    // parent process
-                    waitfg(childPid);
+                    addjob(&newJob, getpid(), FG, cmdLine);
+                    waitpid(childPid, &returnedStatus, 0);
                 }
+                execve(commandName, argv, environ);
+                printf("%s: Command Not Found\n",commandName);
+                exit(1);
                 
             }
         }
