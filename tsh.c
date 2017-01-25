@@ -349,7 +349,7 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid){
 
-    waitpid(pid, NULL, 0);
+    waitpid(pid, NULL, WUNTRACED);
     return;
 }
 
