@@ -389,11 +389,12 @@ void sigint_handler(int sig)
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
             deletejob(jobs, fgPID);
+            printf("%s",prompt);
         }
         else{
             debugLog("No fg process ignoring SIGINT\n");
+            printf("%s",prompt);
         }
-        debugLog("Should print prompt");
         printf("%s",prompt);
     }
     
