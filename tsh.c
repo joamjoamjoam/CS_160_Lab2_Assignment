@@ -197,20 +197,20 @@ void eval(char *cmdLine)
                 if((childPid = fork()) == 0){
                     // child process
                     char* iterator = commandName;
-                    int addBin = 0;
+                    int absPath = 0;
                     
                     while (*iterator)
                     {
                         if (strchr("/", *iterator))
                         {
                             // command name contains a slash
-                            addBin = 1;
+                            absPath = 1;
                         }
                         
                         iterator++;
                     }
                     
-                    if (addBin) {
+                    if (!absPath) {
                         sprintf(commandName, "/bin/%s",commandName);
                     }
                     
