@@ -193,7 +193,7 @@ void eval(char *cmdLine)
                 //printf("%s is being run by eval in bg\n",commandName);
             }
             else{
-                printf("%s is being run by eval in fg\n",commandName);
+                //printf("%s is being run by eval in fg\n",commandName);
                 struct job_t newJob;
                 
                 if((childPid = fork()) == 0){
