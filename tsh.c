@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -152,6 +153,7 @@ int main(int argc, char **argv)
         }
         if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
             app_error("fgets error");
+        // handle empty command line send
         if (feof(stdin)) { /* End of file (ctrl-d) */
             fflush(stdout);
             exit(0);
@@ -181,8 +183,13 @@ int main(int argc, char **argv)
  */
 void eval(char *cmdLine)
 {
-    // if cmdLine is quit then quit
     debugLog("cmdLine = %s",cmdLine);
+    if (!strcmp("", cmdLine)) {
+        // commandLine is empty
+        return;
+    }
+    assert(cmdLine != NULL && "commandLine must not be empty");
+    
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
