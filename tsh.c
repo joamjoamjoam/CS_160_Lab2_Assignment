@@ -220,13 +220,14 @@ void eval(char *cmdLine)
                 
             }
             else{
+                // parent process
                 if (runInBackground) {
                     printf("backgrounded pid:%d process:%s",childPid,commandName);
                     addjob(&newJob, getpid(), BG, cmdLine);
                 }
                 else{
                     addjob(&newJob, getpid(), FG, cmdLine);
-                    waitpid(childPid, &returnedStatus, 0);
+                    waitfg(childPid);
                 }
             }
         }
@@ -313,6 +314,7 @@ int builtin_cmd(char **argv)
         // call do_bgfg
     }
     else if(!strcmp("jobs",argv[0])){
+        listjobs(jobs);
     }
     
     return ranSomething;     /* not a builtin command */
