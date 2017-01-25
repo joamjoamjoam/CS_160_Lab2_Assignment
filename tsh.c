@@ -382,6 +382,7 @@ void sigchld_handler(int sig)
 void sigint_handler(int sig)
 {
     if (sig == SIGINT){
+        printf("\n");
         debugLog("User Pressed ctrl-c\n");
         debugLog("Killing Foreground job\n");
         
