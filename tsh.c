@@ -383,15 +383,15 @@ void sigint_handler(int sig)
 {
     if (sig == SIGINT){
         debugLog("User Pressed ctrl-c\n");
-        debugLog("Killing Foreground job");
+        debugLog("Killing Foreground job\n");
         pid_t fgPID = fgpid(jobs);
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
-            debugLog("Forwarded SIGINT to pid: %d", fgPID);
+            debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
             deletejob(jobs, fgPID);
         }
         else{
-            debugLog("No fg process ignoring SIGINT");
+            debugLog("No fg process ignoring SIGINT\n");
         }
     }
     
