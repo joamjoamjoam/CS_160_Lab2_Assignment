@@ -349,7 +349,7 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid){
 
-    waitpid(pid, NULL, WNOHANG);
+    waitpid(pid, NULL, 0);
     return;
 }
 
@@ -369,7 +369,7 @@ void sigchld_handler(int sig)
     if (sig == SIGCHLD){
         int returnedStatus;
         pid_t signalingPID = wait(&returnedStatus);
-        debugLog("SIGCHLD recieved from pid: ", signalingPID);
+        debugLog("SIGCHLD recieved from pid: \n", signalingPID);
         
         if (WIFEXITED(returnedStatus)){
             // process terminated by exit
