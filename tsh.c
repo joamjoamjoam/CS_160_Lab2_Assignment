@@ -183,12 +183,13 @@ int main(int argc, char **argv)
  */
 void eval(char *cmdLine)
 {
-    debugLog("cmdLine = %s",cmdLine);
     if (!strcmp("\n", cmdLine)) {
-        debugLog("Command Line is Empty.");
+        debugLog("Command Line is Empty\n");
         return;
     }
-    assert(cmdLine != NULL && "commandLine must not be empty");
+    assert(!strcmp("\n", cmdLine) && "commandLine must not be empty");
+    
+    debugLog("cmdLine = %s",cmdLine);
     
     char* argv[MAXARGS];
     char commandName[MAXLINE];
