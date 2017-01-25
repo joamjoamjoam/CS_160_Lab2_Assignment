@@ -198,7 +198,7 @@ void eval(char *cmdLine)
                     // child process
                     addjob(&newJob, getpid(), FG, cmdLine);
                     execve(commandName, argv, environ);
-                    printf("This only runs if exec fails\n");
+                    printf("%s: Command Not Found\n",commandName);
                     exit(1);
                     
                 }
@@ -320,6 +320,7 @@ void waitfg(pid_t pid)
     else{
         printf("Child %d terminated wierdly\n", exitedId);
     }
+    deletejob(jobs, exitedId);
     return;
 }
 
