@@ -345,30 +345,12 @@ void do_bgfg(char **argv)
 }
 
 /*
- * waitfg - Block until process pid is no longer the foreground process
+ * waitfg - Block until process pid is no longer the foreground process based on job list
  */
-void waitfg(pid_t pid)
-{
-    pid_t fgId = fgpid(jobs);
-    int returnedStatus;
-    pid_t exitedId = waitpid(fgId, &returnedStatus, WUNTRACED);
-    
-    if (WIFEXITED(returnedStatus)){
-        // process terminated by exit
-        debugLog("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
-        deletejob(jobs, exitedId);
-    }
-    else if(WIFSIGNALED(returnedStatus)){
-        // terminated by a signal
-        int signal = WTERMSIG(returnedStatus);
-        debugLog("Child %d killed by %d signal\n", exitedId,signal);
-        deletejob(jobs, exitedId);
-    }
-    else if (WIFSTOPPED(returnedStatus)){
-        debugLog("Child %d was stopped.\n", exitedId);
-    }
-    else{
-        debugLog("Child %d terminated wierdly\n", exitedId);
+void waitfg(pid_t pid){
+
+    while (fgpid(jobs) != 0) {
+        
     }
     return;
 }
@@ -386,11 +368,31 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig)
 {
-    pid_t signalingPID = wait(NULL);
     if (sig == SIGCHLD){
-        debugLog("SIGCHLD recieved ");
+        int* returnedStatus;
+        pid_t signalingPID = wait(returnedStatus);
+        debugLog("SIGCHLD recieved from pid: ", signalingPID);
         
-        debugLog("from pid: %d\n",signalingPID);
+        if (WIFEXITED(returnedStatus)){
+            // process terminated by exit
+            debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+            deletejob(jobs, signalingPID);
+        }
+        else if(WIFSIGNALED(returnedStatus)){
+            // terminated by a signal
+            int signal = WTERMSIG(returnedStatus);
+            debugLog("Child %d killed by %d signal\n", signalingPID,signal);
+            deletejob(jobs, signalingPID);
+        }
+        else if (WIFSTOPPED(returnedStatus)){
+            debugLog("Child %d was stopped.\n", signalingPID);
+            struct job_t* tmp = getjobpid(jobs, signalingPID);
+            tmp->state = ST;
+        }
+        else{
+            debugLog("Child %d terminated wierdly\n", signalingPID);
+        }
+        
         // kill all zombie children and
     }
     return;
@@ -413,8 +415,6 @@ void sigint_handler(int sig)
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
-            deletejob(jobs, fgPID);
-            
         }
         else{
             debugLog("No fg process ignoring SIGINT\n");
