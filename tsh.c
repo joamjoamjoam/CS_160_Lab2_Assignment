@@ -393,6 +393,7 @@ void sigint_handler(int sig)
         else{
             debugLog("No fg process ignoring SIGINT\n");
         }
+        
         printf("%s",prompt);
     }
     
