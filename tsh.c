@@ -378,6 +378,7 @@ void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
         debugLog("SIGCHLD recieved\n");
+        // kill all zombie children
     }
     return;
 }
@@ -395,7 +396,7 @@ void sigint_handler(int sig)
         debugLog("Killing Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
-        //debugLog("fgPID = %d",fgPID);
+        debugLog("fgPID = %d",fgPID);
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
@@ -421,6 +422,8 @@ void sigtstp_handler(int sig)
 {
     if (sig == SIGSTOP){
         debugLog("User Pressed ctrl-z\n");
+        debugLog("Stopping FG process");
+        
     }
     return;
 }
