@@ -156,6 +156,8 @@ int main(int argc, char **argv)
     exit(0); /* control never reaches here */
 }
 
+#pragma mark User Implemented Functions
+
 /*
  * eval - Evaluate the command line that the user has just typed in
  *
@@ -170,25 +172,25 @@ int main(int argc, char **argv)
 void eval(char *cmdLine)
 {
     // if cmdLine is quit then quit
-    printf("cmdLine = %s",cmdLine);
+    //printf("cmdLine = %s",cmdLine);
     char* argv[MAXARGS];
     char commandName[MAXLINE];
     int childPid= 0;
     int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
-    printf("ParsedCommandName = %s\n", commandName);
+    //printf("ParsedCommandName = %s\n", commandName);
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
         if(builtin_cmd(argv)){
-            printf("%s ran by builtin_cmd not eval\n",commandName);
+            //printf("%s ran by builtin_cmd not eval\n",commandName);
         }
         else{
             // is process running in the background?
             if (runInBackground) {
                 // run process in background and dont hold shell
-                printf("%s is being run by eval in bg\n",commandName);
+                //printf("%s is being run by eval in bg\n",commandName);
             }
             else{
                 printf("%s is being run by eval in fg\n",commandName);
@@ -381,7 +383,7 @@ void sigtstp_handler(int sig)
 /*********************
  * End signal handlers
  *********************/
-
+#pragma mark Given Helper Functions
 /***********************************************
  * Helper routines that manipulate the job list
  **********************************************/
