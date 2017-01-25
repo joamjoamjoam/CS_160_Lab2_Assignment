@@ -383,19 +383,22 @@ void sigint_handler(int sig)
 {
     if (sig == SIGINT){
         debugLog("User Pressed ctrl-c\n");
+        char c;
+        while((c = getchar()) != '\n' && c != EOF);
         debugLog("Killing Foreground job\n");
+        
         pid_t fgPID = fgpid(jobs);
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
             deletejob(jobs, fgPID);
-            printf("%s",prompt);
+            
         }
         else{
-            debugLog("No fg process ignoring SIGINT\n");
-            printf("%s",prompt);
+            debugLog("No fg process ignoring SIGINT\n%s",prompt);
         }
         printf("%s",prompt);
+        fflush(stdout);
     }
     
     return;
