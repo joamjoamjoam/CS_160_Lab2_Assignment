@@ -351,7 +351,7 @@ void waitfg(pid_t pid)
 {
     pid_t fgId = fgpid(jobs);
     int returnedStatus;
-    pid_t exitedId = waitpid(fgId, &returnedStatus, 0);
+    pid_t exitedId = waitpid(fgId, &returnedStatus, WUNTRACED);
     
     if (WIFEXITED(returnedStatus)){
         debugLog("Child %d terminated with exit status %d\n", exitedId, WEXITSTATUS(returnedStatus));
@@ -359,7 +359,7 @@ void waitfg(pid_t pid)
     else{
         debugLog("Child %d terminated wierdly\n", exitedId);
     }
-    deletejob(jobs, exitedId);
+    deletejob(jobs, exitedId); // deletes fg process
     return;
 }
 
@@ -378,7 +378,7 @@ void sigchld_handler(int sig)
 {
     if (sig == SIGCHLD){
         debugLog("SIGCHLD recieved\n");
-        // kill all zombie children
+        // kill all zombie children and delete it from the jobs list if not fg process
     }
     return;
 }
@@ -396,7 +396,7 @@ void sigint_handler(int sig)
         debugLog("Killing Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
-        debugLog("fgPID = %d",fgPID);
+        debugLog("fgPID = %d\n",fgPID);
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
@@ -426,8 +426,9 @@ void sigtstp_handler(int sig)
         debugLog("Stopping Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
-        debugLog("fgPID = %d",fgPID);
+        debugLog("fgPID = %d\n",fgPID);
         if (fgPID > 0) {
+            // first bg the fg process then stop it otherwise term never gets control back
             kill(fgPID,SIGTSTP);
             debugLog("Forwarded SIGTSTP to pid: %d\n", fgPID);
             struct job_t* tmp = getjobpid(jobs, fgPID);
