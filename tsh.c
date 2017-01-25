@@ -386,7 +386,7 @@ void sigint_handler(int sig)
         debugLog("Killing Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
-        debugLog("fgPID = %d",fgPID);
+        //debugLog("fgPID = %d",fgPID);
         if (fgPID > 0) {
             kill(fgPID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
