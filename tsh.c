@@ -472,7 +472,7 @@ void sigchld_handler(int sig)
         int returnedStatus;
         int signalingPID = 0;
         while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG)) > 0) {
-            debugLog("SIGCHLD recieved from pid: \n", signalingPID);
+            debugLog("SIGCHLD recieved from pid: %d\n", signalingPID);
             fflush(stdout);
             
             if (WIFEXITED(returnedStatus)){
