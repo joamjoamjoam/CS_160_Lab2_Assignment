@@ -377,7 +377,8 @@ void do_bgfg(char **argv)
             int test = fgpid(jobs);
             assert((test > 0 ) && "There can only be one FG job");
             kill(pidToStateChange, SIGCONT); // restart process
-            waitfg(pidToStateChange);
+            
+            waitfg(pidToStateChange); // this may not be right
             
             // new process terminated so we have to fg fg process
             // then fg it
@@ -414,39 +415,42 @@ void do_bgfg(char **argv)
  * waitfg - Block until process pid is no longer the foreground process based on job list
  */
 void waitfg(pid_t pid){
-    int returnedStatus;
-    int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
-    fflush(stdout);
-    
-    if (signalingPID == -1) {
-        debugLog("waitpid returned error in waitfg");
-        return;
-    }
-    else if (WIFEXITED(returnedStatus)){
-        // process terminated by exit clean up child by killig it
-        debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
-        fflush(stdout);
-        deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGTERM);
-    }
-    else if(WIFSIGNALED(returnedStatus)){
-        // terminated by a signal
-        int signal = WTERMSIG(returnedStatus);
-        debugLog("FG Process %d killed by %d signal\n", signalingPID,signal);
-        fflush(stdout);
-        deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGTERM);
-    }
-    else if (WIFSTOPPED(returnedStatus)){
-        debugLog("FG process %d was stopped.\n", signalingPID);
-        fflush(stdout);
-        struct job_t* tmp = getjobpid(jobs, signalingPID);
-        tmp->state = ST;
-    }
-    else{
-        debugLog("FG process %d terminated wierdly\n", signalingPID);
-        fflush(stdout);
-        kill(signalingPID, SIGTERM);
+//    int returnedStatus;
+//    int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
+//    fflush(stdout);
+//    
+//    if (signalingPID == -1) {
+//        debugLog("waitpid returned error in waitfg");
+//        return;
+//    }
+//    else if (WIFEXITED(returnedStatus)){
+//        // process terminated by exit clean up child by killig it
+//        debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
+//        fflush(stdout);
+//        deletejob(jobs, signalingPID);
+//        kill(signalingPID, SIGTERM);
+//    }
+//    else if(WIFSIGNALED(returnedStatus)){
+//        // terminated by a signal
+//        int signal = WTERMSIG(returnedStatus);
+//        debugLog("FG Process %d killed by %d signal\n", signalingPID,signal);
+//        fflush(stdout);
+//        deletejob(jobs, signalingPID);
+//        kill(signalingPID, SIGTERM);
+//    }
+//    else if (WIFSTOPPED(returnedStatus)){
+//        debugLog("FG process %d was stopped.\n", signalingPID);
+//        fflush(stdout);
+//        struct job_t* tmp = getjobpid(jobs, signalingPID);
+//        tmp->state = ST;
+//    }
+//    else{
+//        debugLog("FG process %d terminated wierdly\n", signalingPID);
+//        fflush(stdout);
+//        kill(signalingPID, SIGTERM);
+//    }
+    while (pid == fgpid(jobs)) {
+        sleep(1);
     }
     return;
 }
