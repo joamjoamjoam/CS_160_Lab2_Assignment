@@ -24,6 +24,7 @@
 #define MAXARGS     128   /* max args on a command line */
 #define MAXJOBS      16   /* max jobs at any point in time */
 #define MAXJID    1<<16   /* max job ID */
+#define MYPGID    7907
 
 /* Job states */
 #define UNDEF 0 /* undefined */
@@ -217,6 +218,8 @@ void eval(char *cmdLine)
                 Signal(SIGINT,  sigint_handler);
                 Signal(SIGTSTP, sigtstp_handler);
                 Signal(SIGCHLD, sigchld_handler);
+                
+                
                 while (*iterator)
                 {
                     if (strchr("/", *iterator))
@@ -240,6 +243,8 @@ void eval(char *cmdLine)
             }
             else{
                 // parent process
+                // first give the child process a new group id
+                setpgid(childPid, MYPGID);
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
                     printf("[%d] (%d) %s", pid2jid(childPid), childPid, cmdLine);
