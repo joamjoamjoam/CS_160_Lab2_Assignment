@@ -355,19 +355,18 @@ void do_bgfg(char **argv)
     if (!jobToChange) {
         return;
     }
+    assert(jobToChange && "pid must exist in jobs");
     pid_t pidToStateChange = jobToChange->pid;
     
-    assert(jobToChange && "pid must exist in jobs");
+    
     
     debugLog("%sing (%d) from previous state %d",commandName,jidToStateChange,jobToChange->state);
     
     if (!strcmp("fg", commandName)) {
         // foreground process
-        struct job_t* fgJob = getjobjid(jobs,jidToStateChange);
         
         if (jobToChange->state == ST) {
             // change fg job to BG state to allow new process to have FG state
-            fgJob->state = BG;
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert(!test && "There can only be one FG job");
@@ -375,19 +374,16 @@ void do_bgfg(char **argv)
             waitfg(pidToStateChange);
             
             // new process terminated so we have to fg fg process
-            fgJob->state = FG;
             // then fg it
         }
         else if(jobToChange->state == BG){
             // foreground process first
-            fgJob->state = BG;
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert(!test && "There can only be one FG job");
             waitfg(pidToStateChange);
             
             // new process terminated so we have to fg fg process
-            fgJob->state = FG;
         }
         else{
             // state = FG do nothing
