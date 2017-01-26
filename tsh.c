@@ -547,8 +547,8 @@ void sigtstp_handler(int sig)
         }
         else{
             debugLog("No fg process ignoring SIGTSTP\n");
+            printf("%s",prompt);
         }
-        printf("%s",prompt);
         fflush(stdout);
     }
     return;
