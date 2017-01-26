@@ -327,10 +327,12 @@ int builtin_cmd(char **argv)
         
     }
     else if(!strcmp("bg",argv[0])){
+        debugLog("Ran bg");
         do_bgfg(argv);
         ranSomething = 1;
     }
     else if(!strcmp("fg",argv[0])){
+        debugLog("ran fg");
         do_bgfg(argv);
         ranSomething = 1;
     }
