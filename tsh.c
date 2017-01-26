@@ -220,6 +220,13 @@ void eval(char *cmdLine)
                 Signal(SIGTSTP, sigtstp_handler);
                 Signal(SIGCHLD, sigchld_handler);
                 
+                if(setpgrp() == -1){
+                    debugLog("setpgrp error");
+                }
+                else{
+                    pid_t groupID = getpgid(0);
+                    debugLog("Created Child With Group ID = %d", groupID);
+                }
                 
                 while (*iterator)
                 {
@@ -543,7 +550,6 @@ void sigint_handler(int sig)
         else{
             debugLog("No fg process ignoring SIGINT\n");
         }
-        printf("%s",prompt);
         fflush(stdout);
     }
     
