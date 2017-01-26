@@ -265,7 +265,9 @@ void eval(char *cmdLine)
  *
  */
 int getNextPGID(){
-    return nextPGID++;
+    int tmp = nextPGID;
+    nextPGID = nextPGID + 1;
+    return tmp;
 }
 
 /*
