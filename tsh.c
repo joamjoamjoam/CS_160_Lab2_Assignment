@@ -363,7 +363,7 @@ void do_bgfg(char **argv)
     
     
     
-    debugLog("%sing (%d) from previous state %d",commandName,jidToStateChange,jobToChange->state);
+    debugLog("%sing (%d) from previous state %d\n",commandName,jidToStateChange,jobToChange->state);
     
     if (!strcmp("fg", commandName)) {
         // foreground process
@@ -372,7 +372,7 @@ void do_bgfg(char **argv)
             // change fg job to BG state to allow new process to have FG state
             jobToChange->state = FG;
             int test = fgpid(jobs);
-            assert(!test && "There can only be one FG job");
+            assert((test > 0 ) && "There can only be one FG job");
             kill(pidToStateChange, SIGCONT); // restart process
             waitfg(pidToStateChange);
             
@@ -383,7 +383,7 @@ void do_bgfg(char **argv)
             // foreground process first
             jobToChange->state = FG;
             int test = fgpid(jobs);
-            assert(!test && "There can only be one FG job");
+            assert((test > 0) && "There can only be one FG job");
             waitfg(pidToStateChange);
             
             // new process terminated so we have to fg fg process
