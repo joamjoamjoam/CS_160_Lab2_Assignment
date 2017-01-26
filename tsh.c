@@ -327,12 +327,12 @@ int builtin_cmd(char **argv)
         
     }
     else if(!strcmp("bg",argv[0])){
-        debugLog("Ran bg");
+        debugLog("Ran bg\n");
         do_bgfg(argv);
         ranSomething = 1;
     }
     else if(!strcmp("fg",argv[0])){
-        debugLog("ran fg");
+        debugLog("ran fg\n");
         do_bgfg(argv);
         ranSomething = 1;
     }
@@ -355,6 +355,7 @@ void do_bgfg(char **argv)
     struct job_t* jobToChange = getjobpid(jobs, jidToStateChange);
     
     if (!jobToChange) {
+        debugLog("no job with jid %d exists in jobs",jidToStateChange);
         return;
     }
     assert(jobToChange && "pid must exist in jobs");
