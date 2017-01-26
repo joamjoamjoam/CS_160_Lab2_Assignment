@@ -24,7 +24,6 @@
 #define MAXARGS     128   /* max args on a command line */
 #define MAXJOBS      16   /* max jobs at any point in time */
 #define MAXJID    1<<16   /* max job ID */
-#define MYPGID    7907
 
 /* Job states */
 #define UNDEF 0 /* undefined */
@@ -55,6 +54,7 @@ extern char **environ;      /* defined in libc */
 char prompt[] = "tsh> ";    /* command line prompt (DO NOT CHANGE) */
 int verbose = 0;            /* if true, print additional output */
 int nextjid = 1;            /* next job ID to allocate */
+int nextPGID = 100;         // next process group id to allocate
 char sbuf[MAXLINE];         /* for composing sprintf messages */
 
 struct job_t {              /* The job struct */
@@ -74,6 +74,7 @@ void eval(char *cmdline);
 int builtin_cmd(char **argv);
 void do_bgfg(char **argv);
 void waitfg(pid_t pid);
+int getNextPGID();
 
 void sigchld_handler(int sig);
 void sigtstp_handler(int sig);
@@ -244,7 +245,7 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 // first give the child process a new group id
-                setpgid(childPid, MYPGID);
+                setpgid(childPid, getNextPGID());
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
                     printf("[%d] (%d) %s", pid2jid(childPid), childPid, cmdLine);
@@ -258,6 +259,13 @@ void eval(char *cmdLine)
     }
     
     return;
+}
+/*
+ * getNextPGID - Gets the next unique process group id for a a child process
+ *
+ */
+int getNextPGID(){
+    return nextPGID++;
 }
 
 /*
