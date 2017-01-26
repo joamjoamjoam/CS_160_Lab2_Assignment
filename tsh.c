@@ -352,10 +352,10 @@ void do_bgfg(char **argv)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     int jidToStateChange =  atoi(argv[1]);
-    struct job_t* jobToChange = getjobpid(jobs, jidToStateChange);
+    struct job_t* jobToChange = getjobjid(jobs, jidToStateChange);
     
     if (!jobToChange) {
-        debugLog("no job with jid %d exists in jobs",jidToStateChange);
+        debugLog("no job with jid %d exists in jobs\n",jidToStateChange);
         return;
     }
     assert(jobToChange && "pid must exist in jobs");
