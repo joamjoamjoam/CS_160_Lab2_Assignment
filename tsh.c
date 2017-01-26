@@ -346,6 +346,9 @@ int builtin_cmd(char **argv)
 
 /*
  * do_bgfg - Execute the builtin bg and fg commands
+ * #define FG 1
+ * #define BG 2
+ * #define ST 3
  */
 void do_bgfg(char **argv)
 {
@@ -415,7 +418,11 @@ void waitfg(pid_t pid){
     int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
     fflush(stdout);
     
-    if (WIFEXITED(returnedStatus)){
+    if (signalingPID == -1) {
+        debugLog("waitpid returned error in waitfg");
+        return;
+    }
+    else if (WIFEXITED(returnedStatus)){
         // process terminated by exit clean up child by killig it
         debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
         fflush(stdout);
