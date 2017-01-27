@@ -294,6 +294,8 @@ int parseLine(const char *cmdline, char **argv,int* passBackArgC)
     int argc;                   /* number of args */
     int bg;                     /* background job? */
     
+    passBackArgC = &argc;
+    
     strcpy(buf, cmdline);
     buf[strlen(buf)-1] = ' ';  /* replace trailing '\n' with space */
     while (*buf && (*buf == ' ')) /* ignore leading spaces */
