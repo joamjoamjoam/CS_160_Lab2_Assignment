@@ -82,7 +82,7 @@ void sigtstp_handler(int sig);
 void sigint_handler(int sig);
 
 /* Here are helper routines that we've provided for you */
-int parseLine(const char *cmdline, char **argv);
+int parseLine(const char *cmdline, char **argv, int* passBackArgC);
 void sigquit_handler(int sig);
 
 void clearjob(struct job_t *job);
@@ -195,12 +195,14 @@ void eval(char *cmdLine)
     debugLog("cmdLine = %s",cmdLine);
     
     char* argv[MAXARGS];
+    int* argc;
     char commandName[MAXLINE];
     int childPid= 0;
-    int runInBackground = parseLine(cmdLine,argv);
+    int runInBackground = parseLine(cmdLine,argv,argc);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
     debugLog("ParsedCommandName = %s\n", commandName);
+    debugLog("Parsed Argument Count = %d", argc);
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
@@ -284,7 +286,7 @@ int getNextPGID(){
  * argument.  Return true if the user has requested a BG job, false if
  * the user has requested a FG job.
  */
-int parseLine(const char *cmdline, char **argv)
+int parseLine(const char *cmdline, char **argv,int* passBackArgC)
 {
     static char array[MAXLINE]; /* holds local copy of command line */
     char *buf = array;          /* ptr that traverses command line */
@@ -324,12 +326,15 @@ int parseLine(const char *cmdline, char **argv)
     }
     argv[argc] = NULL;
     
-    if (argc == 0)  /* ignore blank line */
+    if (argc == 0){  /* ignore blank line */
+        passBackArgC = &argc;
         return 1;
+    }
     
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
         argv[--argc] = NULL;
+        passBackArgC = &argc;
     }
     return bg;
 }
@@ -377,7 +382,7 @@ void do_bgfg(char **argv)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    if (argv[1]) {
+    if (argv[1]) {// must test if this exists this as it exists segfaults
         debugLog("argv[1] = %s", argv[1]);
     }
     else{
@@ -387,6 +392,7 @@ void do_bgfg(char **argv)
     
     // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
     int jidToStateChange;
+    
     if (argv[1][0] == '%') {
         jidToStateChange =  atoi(argv[1] + 1);
     }
@@ -452,6 +458,11 @@ void do_bgfg(char **argv)
     
     return;
 }
+
+/*
+ * getSizeOf
+ *
+ */
 
 /*
  * waitfg - Block until process pid is no longer the foreground process based on job list
