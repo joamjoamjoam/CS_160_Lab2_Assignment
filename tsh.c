@@ -246,7 +246,7 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 // first give the child process a new group id
-                debugLog("Setting pid %d to pgid %d from old pgid %d",childPid,childPid,getpgid(childPid));
+                debugLog("Setting pid %d to pgid %d from old pgid %d\n",childPid,childPid,getpgid(childPid));
                 setpgid(childPid, 0);
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
