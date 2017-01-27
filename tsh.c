@@ -243,7 +243,7 @@ void eval(char *cmdLine)
                 // install signal handlers to child process.
                 Signal(SIGINT,  sigint_handler);
                 Signal(SIGTSTP, sigtstp_handler);
-                Signal(SIGCHLD, sigchld_handler);
+                //Signal(SIGCHLD, sigchld_handler);
                 
                 // wait for parent pgid change
                 
@@ -520,9 +520,6 @@ void do_bgfg(char **argv, int argc)
             killpg(getpgid(pidToStateChange), SIGCONT); // restart process
             
             waitfg(pidToStateChange); // this may not be right
-            
-            // new process terminated so we have to fg fg process
-            // then fg it
         }
         else if(jobToChange->state == BG){
             // foreground process first
@@ -639,6 +636,7 @@ void sigchld_handler(int sig)
                 // process terminated by exit clean up child by killig it
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 fflush(stdout);
+                killpg(getpgid(signalingPID), SIGTERM);
                 deletejob(jobs, signalingPID);
             }
             else if(WIFSIGNALED(returnedStatus)){
@@ -647,6 +645,7 @@ void sigchld_handler(int sig)
                 printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
+                killpg(getpgid(signalingPID), SIGTERM);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
@@ -657,6 +656,7 @@ void sigchld_handler(int sig)
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
                 fflush(stdout);
+                killpg(getpgid(signalingPID), SIGTERM);
             }
             
         }
