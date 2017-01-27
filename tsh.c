@@ -458,7 +458,7 @@ void do_bgfg(char **argv, int argc)
             debugLog("Correct Argments for %s found.\n", commandName);
         }
         else{
-            printf("%s: argument must be a PID or %%jobid", commandName);
+            printf("%s: argument must be a PID or %%jobid\n", commandName);
             return;
         }
     }
