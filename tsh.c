@@ -70,10 +70,22 @@ struct job_t jobs[MAXJOBS]; /* The job list */
 
 /* Function prototypes */
 
+/*********************************
+ * My Changes To Given Functions
+ * int parseArgc(const char *cmdline, char **argv);
+ * i reused pasreLine and chaged it to return argc
+ * int builtin_cmd(char **argv, int argc);
+ * i modified this toallow the passing of argc to built in functions
+ * void do_bgfg(char **argv,argc);
+ * i modified this toallow the passing of argc to bg and fg
+ 
+ */
+
+
 /* Here are the functions that you will implement */
 void eval(char *cmdline);
-int builtin_cmd(char **argv);
-void do_bgfg(char **argv);
+int builtin_cmd(char **argv, int argc);
+void do_bgfg(char **argv,argc);
 void waitfg(pid_t pid);
 int getNextPGID();
 
@@ -209,7 +221,7 @@ void eval(char *cmdLine)
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
-        if(builtin_cmd(argv)){
+        if(builtin_cmd(argv, argc)){
             //printf("%s ran by builtin_cmd not eval\n",commandName);
         }
         else{
@@ -400,7 +412,7 @@ int parseArgc(const char *cmdline, char **argv)
  * builtin_cmd - If the user has typed a built-in command then execute
  *    it immediately.
  */
-int builtin_cmd(char **argv)
+int builtin_cmd(char **argv, int argc)
 {
     // if it is a bulit in command run it here and return 1
     // if not retunr 0 to tell eval that it must run it there
@@ -412,12 +424,12 @@ int builtin_cmd(char **argv)
     }
     else if(!strcmp("bg",argv[0])){
         debugLog("Ran bg\n");
-        do_bgfg(argv);
+        do_bgfg(argv, argc);
         ranSomething = 1;
     }
     else if(!strcmp("fg",argv[0])){
         debugLog("ran fg\n");
-        do_bgfg(argv);
+        do_bgfg(argv,argc);
         ranSomething = 1;
     }
     else if(!strcmp("jobs",argv[0])){
@@ -434,13 +446,13 @@ int builtin_cmd(char **argv)
  * #define BG 2
  * #define ST 3
  */
-void do_bgfg(char **argv)
+void do_bgfg(char **argv, int argc)
 {
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    if (argv[1]) {// must test if this exists this as it exists segfaults
-        debugLog("argv[1] = %s", argv[1]);
+    if (argc >= 2) {// must test if this exists this as it exists segfaults
+        debugLog("Correct Argments for %s found.", commandName);
     }
     else{
         printf("%s command requires PID or %%jobid argument", commandName);
