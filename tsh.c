@@ -237,6 +237,7 @@ void eval(char *cmdLine)
                     sprintf(commandName, "/bin/%s",argv[0]);
                 }
                 
+                debugLog("Child has pgid %d", getpgrp());
                 
                 execve(commandName, argv, environ);
                 printf("%s: Command Not Found\n",commandName);
