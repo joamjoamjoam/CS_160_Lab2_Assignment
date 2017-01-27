@@ -93,7 +93,9 @@ void sigchld_handler(int sig);
 void sigtstp_handler(int sig);
 void sigint_handler(int sig);
 
+// my helper functions
 int parseArgc(const char *cmdline, char **argv);
+int hasDisallowedChars(char* tmp);
 
 /* Here are helper routines that we've provided for you */
 int parseLine(const char *cmdline, char **argv);
@@ -459,6 +461,11 @@ void do_bgfg(char **argv, int argc)
         return;
     }
     
+    // make sure there are only digits and % in argv[1]
+    if (hasDisallowedChars(argv[0])) {
+        printf("%s command requires PID or %%jobid argument\n", commandName);
+        return;
+    }
     
     // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
     int jidToStateChange;
@@ -501,7 +508,7 @@ void do_bgfg(char **argv, int argc)
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert((test > 0 ) && "There can only be one FG job");
-            printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
+            debugLog("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
             kill(pidToStateChange, SIGCONT); // restart process
             
             waitfg(pidToStateChange); // this may not be right
@@ -514,7 +521,7 @@ void do_bgfg(char **argv, int argc)
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert((test > 0) && "There can only be one FG job");
-            printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
+            debugLog("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
             waitfg(pidToStateChange);
             
             // new process terminated so we have to fg fg process
@@ -540,9 +547,21 @@ void do_bgfg(char **argv, int argc)
 }
 
 /*
- * getSizeOf
+ * testForChars(char* tmp) test if there are any of the disallowed chars in tmp
  *
  */
+int hasDisallowedChars(char* tmp){
+    const char *disallowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char *iterator = tmp;
+    while (*iterator)
+    {
+        if (strchr(disallowedChars, *iterator))
+            return 1;
+        
+        iterator++;
+    }
+    return 0;
+}
 
 /*
  * waitfg - Block until process pid is no longer the foreground process based on job list
