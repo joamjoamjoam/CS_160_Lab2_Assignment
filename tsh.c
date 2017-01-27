@@ -81,8 +81,10 @@ void sigchld_handler(int sig);
 void sigtstp_handler(int sig);
 void sigint_handler(int sig);
 
+int parseArgc(const char *cmdline, char **argv);
+
 /* Here are helper routines that we've provided for you */
-int parseLine(const char *cmdline, char **argv, int* passBackArgC);
+int parseLine(const char *cmdline, char **argv);
 void sigquit_handler(int sig);
 
 void clearjob(struct job_t *job);
@@ -195,10 +197,11 @@ void eval(char *cmdLine)
     debugLog("cmdLine = %s",cmdLine);
     
     char* argv[MAXARGS];
-    int* argc = NULL;
+    char* ignoreArgv[MAXARGS];
+    int argc = parseArgc(cmdLine, ignoreArgv);
     char commandName[MAXLINE];
     int childPid= 0;
-    int runInBackground = parseLine(cmdLine,argv,argc);
+    int runInBackground = parseLine(cmdLine,argv);
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
     debugLog("ParsedCommandName = %s\n", commandName);
@@ -286,15 +289,13 @@ int getNextPGID(){
  * argument.  Return true if the user has requested a BG job, false if
  * the user has requested a FG job.
  */
-int parseLine(const char *cmdline, char **argv,int* passBackArgC)
+int parseLine(const char *cmdline, char **argv)
 {
     static char array[MAXLINE]; /* holds local copy of command line */
     char *buf = array;          /* ptr that traverses command line */
     char *delim;                /* points to first space delimiter */
     int argc;                   /* number of args */
     int bg;                     /* background job? */
-    
-    passBackArgC = &argc;
     
     strcpy(buf, cmdline);
     buf[strlen(buf)-1] = ' ';  /* replace trailing '\n' with space */
@@ -329,16 +330,70 @@ int parseLine(const char *cmdline, char **argv,int* passBackArgC)
     argv[argc] = NULL;
     
     if (argc == 0){  /* ignore blank line */
-        (*passBackArgC) = argc;
         return 1;
     }
     
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
         argv[--argc] = NULL;
-        (*passBackArgC) = argc;
     }
     return bg;
+}
+
+/*
+ * parseArgc - Parse the command line and build the argc.
+ *
+ * re running parseline but instead returning argc
+ */
+int parseArgc(const char *cmdline, char **argv)
+{
+    static char array[MAXLINE]; /* holds local copy of command line */
+    char *buf = array;          /* ptr that traverses command line */
+    char *delim;                /* points to first space delimiter */
+    int argc;                   /* number of args */
+    int bg;                     /* background job? */
+    
+    strcpy(buf, cmdline);
+    buf[strlen(buf)-1] = ' ';  /* replace trailing '\n' with space */
+    while (*buf && (*buf == ' ')) /* ignore leading spaces */
+        buf++;
+    
+    /* Build the argv list */
+    argc = 0;
+    if (*buf == '\'') {
+        buf++;
+        delim = strchr(buf, '\'');
+    }
+    else {
+        delim = strchr(buf, ' ');
+    }
+    
+    while (delim) {
+        argv[argc++] = buf;
+        *delim = '\0';
+        buf = delim + 1;
+        while (*buf && (*buf == ' ')) /* ignore spaces */
+            buf++;
+        
+        if (*buf == '\'') {
+            buf++;
+            delim = strchr(buf, '\'');
+        }
+        else {
+            delim = strchr(buf, ' ');
+        }
+    }
+    argv[argc] = NULL;
+    
+    if (argc == 0){  /* ignore blank line */
+        return 0;
+    }
+    
+    /* should the job run in the background? */
+    if ((bg = (*argv[argc-1] == '&')) != 0) {
+        argv[--argc] = NULL;
+    }
+    return argc;
 }
 
 /*
