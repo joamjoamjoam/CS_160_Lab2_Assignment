@@ -467,8 +467,8 @@ void waitfg(pid_t pid){
 //        fflush(stdout);
 //        kill(signalingPID, SIGTERM);
 //    }
-    while (pid == fgpid(jobs)) {
-        sleep(1);
+    while (pid == fgpid(jobs) || fgpid(jobs) != 0) {
+        sleep(.5);
     }
     return;
 }
