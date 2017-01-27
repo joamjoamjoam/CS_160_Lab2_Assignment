@@ -406,6 +406,7 @@ void do_bgfg(char **argv)
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert((test > 0 ) && "There can only be one FG job");
+            printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
             kill(pidToStateChange, SIGCONT); // restart process
             
             waitfg(pidToStateChange); // this may not be right
@@ -418,6 +419,7 @@ void do_bgfg(char **argv)
             jobToChange->state = FG;
             int test = fgpid(jobs);
             assert((test > 0) && "There can only be one FG job");
+            printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
             waitfg(pidToStateChange);
             
             // new process terminated so we have to fg fg process
