@@ -439,7 +439,7 @@ void do_bgfg(char **argv)
 void waitfg(pid_t pid){
     int returnedStatus;
     int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
-    fflush(stdout);
+    //fflush(stdout);
     
     if (signalingPID == -1) {
         debugLog("waitpid returned error in waitfg");
