@@ -195,7 +195,7 @@ void eval(char *cmdLine)
     debugLog("cmdLine = %s",cmdLine);
     
     char* argv[MAXARGS];
-    int* argc;
+    int* argc = NULL;
     char commandName[MAXLINE];
     int childPid= 0;
     int runInBackground = parseLine(cmdLine,argv,argc);
