@@ -377,7 +377,15 @@ void do_bgfg(char **argv)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    // have to clean up jid to find first bg %2 to bg 2
+    if (argv[1]) {
+        debugLog("argv[1] = %s", argv[1]);
+    }
+    else{
+        printf("%s command requires PID or %%jobid argument", commandName);
+    }
+    
+    
+    // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
     int jidToStateChange;
     if (argv[1][0] == '%') {
         jidToStateChange =  atoi(argv[1] + 1);
