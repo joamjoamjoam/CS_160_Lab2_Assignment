@@ -690,6 +690,7 @@ void sigint_handler(int sig)
 void sigtstp_handler(int sig)
 {
     if (sig == SIGTSTP){
+        printf("\n");
         debugLog("User Pressed ctrl-z\n");
         debugLog("Stopping Foreground job\n");
         
