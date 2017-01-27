@@ -453,7 +453,7 @@ void do_bgfg(char **argv, int argc)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    if (argc >= 2) {// must test if this exists this as it exists segfaults
+    if (argc >= 2 && !hasDisallowedChars(argv[0])) {
         debugLog("Correct Argments for %s found.\n", commandName);
     }
     else{
@@ -461,11 +461,6 @@ void do_bgfg(char **argv, int argc)
         return;
     }
     
-    // make sure there are only digits and % in argv[1]
-    if (hasDisallowedChars(argv[0])) {
-        printf("%s command requires PID or %%jobid argument\n", commandName);
-        return;
-    }
     
     // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
     int jidToStateChange;
