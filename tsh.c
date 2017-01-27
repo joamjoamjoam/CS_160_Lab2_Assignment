@@ -96,6 +96,7 @@ void sigint_handler(int sig);
 // my helper functions
 int parseArgc(const char *cmdline, char **argv);
 int hasDisallowedChars(char* tmp);
+void terminateAllUnexitedJobs(struct job_t* jobs);
 
 /* Here are helper routines that we've provided for you */
 int parseLine(const char *cmdline, char **argv);
@@ -421,6 +422,8 @@ int builtin_cmd(char **argv, int argc)
     int ranSomething = 0;
     if(!strcmp("quit",argv[0])){
         debugLog(("Running Quit in builtin_cmd\n"));
+        // kill all process in jobs list befre dying
+        terminateAllUnexitedJobs(jobs);
         exit(0);
         
     }
@@ -581,7 +584,7 @@ void waitfg(pid_t pid){
         debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
         fflush(stdout);
         deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGTERM);
+        killpg(getpgid(signalingPID), SIGTERM);
     }
     else if(WIFSIGNALED(returnedStatus)){
         // terminated by a signal
@@ -589,7 +592,7 @@ void waitfg(pid_t pid){
         printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
         fflush(stdout);
         deletejob(jobs, signalingPID);
-        kill(signalingPID, SIGTERM);
+        killpg(getpgid(signalingPID), SIGTERM);
     }
     else if (WIFSTOPPED(returnedStatus)){
         printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(signalingPID),signalingPID ,WSTOPSIG(returnedStatus));
@@ -600,7 +603,7 @@ void waitfg(pid_t pid){
     else{
         debugLog("FG process %d terminated wierdly\n", signalingPID);
         fflush(stdout);
-        kill(signalingPID, SIGTERM);
+        killpg(getpgid(signalingPID), SIGTERM);
     }
 //    while (pid == fgpid(jobs) || fgpid(jobs) != 0) {
 //        sleep(.5);
@@ -873,7 +876,18 @@ void listjobs(struct job_t *jobs)
         }
     }
 }
-/******************************
+
+void terminateAllUnexitedJobs(struct job_t* jobs){
+    int i;
+    
+    for (i = 0; i < MAXJOBS; i++) {
+        if (jobs[i].pid != 0) {
+            debugLog("%s with PID: %d was left and killed.",jobs[i].cmdline, jobs[i].pid);
+            killpg(getpgid(jobs[i].pid), SIGKILL);
+        }
+    }
+}
+        /******************************
  * end job list helper routines
  ******************************/
 
