@@ -452,10 +452,10 @@ void do_bgfg(char **argv, int argc)
     strcpy(commandName, argv[0]);
     
     if (argc >= 2) {// must test if this exists this as it exists segfaults
-        debugLog("Correct Argments for %s found.", commandName);
+        debugLog("Correct Argments for %s found.\n", commandName);
     }
     else{
-        printf("%s command requires PID or %%jobid argument", commandName);
+        printf("%s command requires PID or %%jobid argument\n", commandName);
         return;
     }
     
