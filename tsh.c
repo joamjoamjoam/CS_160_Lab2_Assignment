@@ -85,7 +85,7 @@ struct job_t jobs[MAXJOBS]; /* The job list */
 /* Here are the functions that you will implement */
 void eval(char *cmdline);
 int builtin_cmd(char **argv, int argc);
-void do_bgfg(char **argv,argc);
+void do_bgfg(char **argv, int argc);
 void waitfg(pid_t pid);
 int getNextPGID();
 
@@ -424,7 +424,7 @@ int builtin_cmd(char **argv, int argc)
     }
     else if(!strcmp("bg",argv[0])){
         debugLog("Ran bg\n");
-        do_bgfg(argv, argc);
+        do_bgfg(argv,argc);
         ranSomething = 1;
     }
     else if(!strcmp("fg",argv[0])){
