@@ -429,6 +429,7 @@ void do_bgfg(char **argv)
     else{
         // background process
         if (jobToChange->state == ST) {
+            printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
             kill(pidToStateChange, SIGCONT);
         }
         else{
