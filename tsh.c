@@ -451,12 +451,16 @@ void do_bgfg(char **argv, int argc)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
+    debugLog("Entering if ...");
     if (argc >= 2) {// must test if this exists this as it exists segfaults
         debugLog("Correct Argments for %s found.", commandName);
     }
     else{
         printf("%s command requires PID or %%jobid argument", commandName);
+        return;
     }
+    debugLog("Exiting if ...");
+    fflush(stdout);
     
     
     // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
