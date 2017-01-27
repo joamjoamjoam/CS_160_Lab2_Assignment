@@ -507,7 +507,7 @@ void sigchld_handler(int sig)
             else if(WIFSIGNALED(returnedStatus)){
                 // terminated by a signal
                 int signal = WTERMSIG(returnedStatus);
-                debugLog("Child %d killed by %d signal\n", signalingPID,signal);
+                printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
                 kill(signalingPID, SIGTERM);
