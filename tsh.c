@@ -377,8 +377,13 @@ void do_bgfg(char **argv)
     strcpy(commandName, argv[0]);
     
     // have to clean up jid to find first bg %2 to bg 2
-    
-    int jidToStateChange =  atoi(argv[1] + 1);
+    int jidToStateChange;
+    if (argv[1][0] == '%') {
+        jidToStateChange =  atoi(argv[1] + 1);
+    }
+    else{
+        jidToStateChange =  atoi(argv[1]);
+    }
     struct job_t* jobToChange = getjobjid(jobs, jidToStateChange);
     
     
