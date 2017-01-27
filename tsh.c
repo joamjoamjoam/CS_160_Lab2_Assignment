@@ -220,13 +220,7 @@ void eval(char *cmdLine)
                 Signal(SIGTSTP, sigtstp_handler);
                 Signal(SIGCHLD, sigchld_handler);
                 
-                if(setpgrp() == -1){
-                    debugLog("setpgrp error");
-                }
-                else{
-                    pid_t groupID = getpgid(0);
-                    debugLog("Created Child With Group ID = %d", groupID);
-                }
+                // wait for parent pgid change
                 
                 while (*iterator)
                 {
@@ -252,7 +246,8 @@ void eval(char *cmdLine)
             else{
                 // parent process
                 // first give the child process a new group id
-                setpgid(childPid, getNextPGID());
+                debugLog("Setting pid %d to pgid %d from old pgid %d",childPid,childPid,getpgid(childPid));
+                setpgid(childPid, 0);
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
                     printf("[%d] (%d) %s", pid2jid(childPid), childPid, cmdLine);
