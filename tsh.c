@@ -240,7 +240,7 @@ void eval(char *cmdLine)
                 debugLog("Child has pgid %d\n", getpgrp());
                 fflush(stdout);
                 sleep (5); // wait for pgid change
-                execve(commandName, argv, environ);
+                //execve(commandName, argv, environ);
                 
                 // this only runs if execve fails
                 printf("%s: Command Not Found\n",commandName);
