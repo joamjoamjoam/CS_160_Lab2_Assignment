@@ -24,6 +24,7 @@
 #define MAXARGS     128   /* max args on a command line */
 #define MAXJOBS      16   /* max jobs at any point in time */
 #define MAXJID    1<<16   /* max job ID */
+#define MYFGGROUPID   7907
 
 /* Job states */
 #define UNDEF 0 /* undefined */
@@ -562,7 +563,7 @@ void sigint_handler(int sig)
             debugLog("No fg process ignoring SIGINT\n");
             printf("%s",prompt);
         }
-        fflush(stdout); 
+        fflush(stdout);
     }
     
     return;
