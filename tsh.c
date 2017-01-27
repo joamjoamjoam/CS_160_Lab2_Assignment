@@ -453,8 +453,14 @@ void do_bgfg(char **argv, int argc)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    if (argc >= 2 && !hasDisallowedChars(argv[1])) {
-        debugLog("Correct Argments for %s found.\n", commandName);
+    if (argc >= 2) {
+        if(!hasDisallowedChars(argv[1])){
+            debugLog("Correct Argments for %s found.\n", commandName);
+        }
+        else{
+            printf("%s: argument must be a PID or %%jobid", commandName);
+            return;
+        }
     }
     else{
         printf("%s command requires PID or %%jobid argument\n", commandName);
@@ -681,6 +687,7 @@ void sigint_handler(int sig)
     
     return;
 }
+
 
 /*
  * sigtstp_handler - The kernel sends a SIGTSTP to the shell whenever
