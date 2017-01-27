@@ -462,24 +462,33 @@ void do_bgfg(char **argv, int argc)
     
     // have to clean up jid to find first bg %2 to bg 2 if % then its a job id if no % hen its a pid
     int jidToStateChange;
+    struct job_t* jobToChange;
+    pid_t pidToStateChange;
+    
     
     if (argv[1][0] == '%') {
+        // is job
         jidToStateChange =  atoi(argv[1] + 1);
+        jobToChange = getjobjid(jobs, jidToStateChange);
+        if (!jobToChange) {
+            printf("%s: %s: no such job\n", commandName, argv[1]);
+            return;
+        }
     }
     else{
-        jidToStateChange =  atoi(argv[1]);
+        // is process
+        pid_t pidToSearchFor =  atoi(argv[1]);
+        
+        jobToChange = getjobpid(jobs, pidToSearchFor);
+        
+        // check if process exists in jobs list
+        if (!jobToChange) {
+            printf("%s: %s: no such process\n", commandName, argv[1]);
+            return;
+        }
     }
-    struct job_t* jobToChange = getjobjid(jobs, jidToStateChange);
     
-    
-    if (!jobToChange) {
-        printf("%s: %s: no such job\n", commandName, argv[1]);
-        return;
-    }
-    assert(jobToChange && "pid must exist in jobs");
-    pid_t pidToStateChange = jobToChange->pid;
-    
-    
+    pidToStateChange = jobToChange->pid;
     
     debugLog("%sing (%d) from previous state %d\n",commandName,jidToStateChange,jobToChange->state);
     
