@@ -238,8 +238,11 @@ void eval(char *cmdLine)
                 }
                 
                 debugLog("Child has pgid %d", getpgrp());
+                fflush(stdout);
                 
                 execve(commandName, argv, environ);
+                
+                // this only runs if execve fails
                 printf("%s: Command Not Found\n",commandName);
                 exit(1);
                 
