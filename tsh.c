@@ -375,8 +375,12 @@ void do_bgfg(char **argv)
 {
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
-    int jidToStateChange =  atoi(argv[1]);
+    
+    // have to clean up jid to find first bg %2 to bg 2
+    
+    int jidToStateChange =  atoi(argv[1] + 1);
     struct job_t* jobToChange = getjobjid(jobs, jidToStateChange);
+    
     
     if (!jobToChange) {
         debugLog("no job with jid %d exists in jobs\n",jidToStateChange);
