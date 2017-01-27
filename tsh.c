@@ -8,6 +8,10 @@
  * This is my unique code written fully by the named above and is not to be used in any other way.
  */
 
+
+////// Just ONE IG QUESTION should processes left stopped or backgrounded be killed by the shell when it exits or should they be left to other shells.
+
+
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -513,7 +517,7 @@ void do_bgfg(char **argv, int argc)
             int test = fgpid(jobs);
             assert((test > 0 ) && "There can only be one FG job");
             debugLog("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
-            kill(getpgid(pidToStateChange), SIGCONT); // restart process
+            killpg(getpgid(pidToStateChange), SIGCONT); // restart process
             
             waitfg(pidToStateChange); // this may not be right
             
