@@ -453,7 +453,7 @@ void do_bgfg(char **argv, int argc)
     char commandName[MAXLINE];
     strcpy(commandName, argv[0]);
     
-    if (argc >= 2 && !hasDisallowedChars(argv[0])) {
+    if (argc >= 2 && !hasDisallowedChars(argv[1])) {
         debugLog("Correct Argments for %s found.\n", commandName);
     }
     else{
