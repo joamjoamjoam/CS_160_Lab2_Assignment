@@ -510,7 +510,7 @@ void do_bgfg(char **argv, int argc)
             int test = fgpid(jobs);
             assert((test > 0 ) && "There can only be one FG job");
             debugLog("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
-            kill(pidToStateChange, SIGCONT); // restart process
+            kill(getpgid(pidToStateChange), SIGCONT); // restart process
             
             waitfg(pidToStateChange); // this may not be right
             
@@ -535,7 +535,7 @@ void do_bgfg(char **argv, int argc)
         // background process
         if (jobToChange->state == ST) {
             printf("[%d] (%d) %s",pid2jid(pidToStateChange), pidToStateChange, jobToChange->cmdline);
-            kill(pidToStateChange, SIGCONT);
+            killpg(getpgid(pidToStateChange), SIGCONT);
         }
         else{
             // state = BG or FG do nothing
@@ -633,7 +633,6 @@ void sigchld_handler(int sig)
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
-                //kill(signalingPID, SIGTERM);
             }
             else if(WIFSIGNALED(returnedStatus)){
                 // terminated by a signal
@@ -641,7 +640,6 @@ void sigchld_handler(int sig)
                 printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
-                //kill(signalingPID, SIGTERM);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
@@ -652,7 +650,6 @@ void sigchld_handler(int sig)
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
                 fflush(stdout);
-                //kill(signalingPID, SIGTERM);
             }
             
         }
@@ -704,10 +701,11 @@ void sigtstp_handler(int sig)
         debugLog("Stopping Foreground job\n");
         
         pid_t fgPID = fgpid(jobs);
+        int fgGID = getpgid(fgPID);
+        
         debugLog("fgPID = %d\n",fgPID);
         if (fgPID > 0) {
-            // first bg the fg process then stop it otherwise term never gets control back
-            kill(fgPID,SIGTSTP);
+            killpg(fgGID,SIGTSTP);
             debugLog("Forwarded SIGTSTP to pid: %d\n", fgPID);
             struct job_t* tmp = getjobpid(jobs, fgPID);
             tmp->state = ST;
