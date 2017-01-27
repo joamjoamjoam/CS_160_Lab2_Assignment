@@ -10,14 +10,14 @@ TSTP
 /bin/echo tsh> jobs
 jobs
 
-/bin/echo tsh> /bin/ps a
-/bin/ps a
+/bin/echo tsh> /bin/ps -U tcall002 -O pgrp
+/bin/ps -U tcall002 -O pgrp
 
 /bin/echo tsh> fg %1
 fg %1
 
-/bin/echo tsh> /bin/ps a
-/bin/ps a
+/bin/echo tsh> /bin/ps -U tcall002 -O pgrp
+/bin/ps -U tcall002 -O pgrp
 
 
 
