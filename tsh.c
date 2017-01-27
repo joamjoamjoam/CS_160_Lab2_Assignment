@@ -468,8 +468,8 @@ void do_bgfg(char **argv, int argc)
     
     if (argv[1][0] == '%') {
         // is job
-        jidToStateChange =  atoi(argv[1] + 1);
-        jobToChange = getjobjid(jobs, jidToStateChange);
+        int jidToSearchFor =  atoi(argv[1] + 1);
+        jobToChange = getjobjid(jobs, jidToSearchFor);
         if (!jobToChange) {
             printf("%s: %s: no such job\n", commandName, argv[1]);
             return;
@@ -487,8 +487,9 @@ void do_bgfg(char **argv, int argc)
             return;
         }
     }
-    
+    assert(jobToChange && "There must be a job to fg/bg");
     pidToStateChange = jobToChange->pid;
+    jidToStateChange = jobToChange->jid;
     
     debugLog("%sing (%d) from previous state %d\n",commandName,jidToStateChange,jobToChange->state);
     
