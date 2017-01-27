@@ -562,7 +562,7 @@ void sigint_handler(int sig)
             debugLog("No fg process ignoring SIGINT\n");
             printf("%s",prompt);
         }
-        fflush(stdout);
+        fflush(stdout); 
     }
     
     return;
