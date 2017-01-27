@@ -633,7 +633,7 @@ void sigchld_handler(int sig)
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
-                kill(signalingPID, SIGTERM);
+                //kill(signalingPID, SIGTERM);
             }
             else if(WIFSIGNALED(returnedStatus)){
                 // terminated by a signal
@@ -641,7 +641,7 @@ void sigchld_handler(int sig)
                 printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
-                kill(signalingPID, SIGTERM);
+                //kill(signalingPID, SIGTERM);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
@@ -652,7 +652,7 @@ void sigchld_handler(int sig)
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
                 fflush(stdout);
-                kill(signalingPID, SIGTERM);
+                //kill(signalingPID, SIGTERM);
             }
             
         }
