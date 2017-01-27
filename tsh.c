@@ -388,8 +388,7 @@ void do_bgfg(char **argv)
     
     
     if (!jobToChange) {
-        debugLog("no job with jid %d exists in jobs\n",jidToStateChange);
-        printf("%s: %d: no such job\n", commandName, jidToStateChange);
+        printf("%s: %s: no such job\n", commandName, argv[1]);
         return;
     }
     assert(jobToChange && "pid must exist in jobs");
