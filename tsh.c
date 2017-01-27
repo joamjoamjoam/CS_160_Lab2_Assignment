@@ -439,7 +439,7 @@ void do_bgfg(char **argv)
 void waitfg(pid_t pid){
     int returnedStatus;
     int signalingPID = waitpid(pid, &returnedStatus, WUNTRACED);
-    //fflush(stdout);
+    fflush(stdout);
     
     if (signalingPID == -1) {
         debugLog("waitpid returned error in waitfg");
@@ -461,7 +461,7 @@ void waitfg(pid_t pid){
         kill(signalingPID, SIGTERM);
     }
     else if (WIFSTOPPED(returnedStatus)){
-        debugLog("FG process %d was stopped.\n", signalingPID);
+        printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(signalingPID),signalingPID ,WSTOPSIG(returnedStatus));
         fflush(stdout);
         struct job_t* tmp = getjobpid(jobs, signalingPID);
         tmp->state = ST;
