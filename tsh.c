@@ -202,7 +202,7 @@ void eval(char *cmdLine)
     strcpy(commandName,argv[0]);
     // print parsed command to stdout seperated by | ex ls | -v | ./example
     debugLog("ParsedCommandName = %s\n", commandName);
-    debugLog("Parsed Argument Count = %d\n", *argc);
+    debugLog("Parsed Argument Count = %d\n", argc);
     
     if(strcmp("",commandName)){ // strcmp return 0 if equal
         // check for built in commands
@@ -327,14 +327,14 @@ int parseLine(const char *cmdline, char **argv,int* passBackArgC)
     argv[argc] = NULL;
     
     if (argc == 0){  /* ignore blank line */
-        passBackArgC = &argc;
+        (*passBackArgC) = argc;
         return 1;
     }
     
     /* should the job run in the background? */
     if ((bg = (*argv[argc-1] == '&')) != 0) {
         argv[--argc] = NULL;
-        passBackArgC = &argc;
+        (*passBackArgC) = argc;
     }
     return bg;
 }
