@@ -237,9 +237,9 @@ void eval(char *cmdLine)
                     sprintf(commandName, "/bin/%s",argv[0]);
                 }
                 
-                debugLog("Child has pgid %d", getpgrp());
+                debugLog("Child has pgid %d\n", getpgrp());
                 fflush(stdout);
-                
+                sleep (5); // wait for pgid change
                 execve(commandName, argv, environ);
                 
                 // this only runs if execve fails
