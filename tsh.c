@@ -674,8 +674,10 @@ void sigint_handler(int sig)
         
         pid_t fgPID = fgpid(jobs);
         debugLog("fgPID = %d\n",fgPID);
+        // we want to send sigint to all process in fgPID's process group
+        int fgGID = getpgid(fgPID);
         if (fgPID > 0) {
-            kill(fgPID,SIGINT);
+            killpg(fgGID,SIGINT);
             debugLog("Forwarded SIGINT to pid: %d\n", fgPID);
         }
         else{
