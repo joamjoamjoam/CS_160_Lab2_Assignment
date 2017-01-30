@@ -265,7 +265,7 @@ void eval(char *cmdLine)
                 
                 debugLog("Child has pgid %d\n", getpgrp());
                 fflush(stdout);
-                
+                 
                 //sleep(1); // wait for parent to add job to job list before reenabling SIGCHLD to prevent race condition
                 // reenable SIGCHLD due to inheriting of old sigset
                 
