@@ -11,6 +11,8 @@
 
 ////// Just ONE IG QUESTION should processes left stopped or backgrounded be killed by the shell when it exits or should they be left to other shells.
 
+// not geing sigchld signls?????? sleep 5 & ends but doesnt delete
+
 
 #include <stdio.h>
 #include <assert.h>
@@ -243,7 +245,7 @@ void eval(char *cmdLine)
                 // install signal handlers to child process.
                 Signal(SIGINT,  sigint_handler);
                 Signal(SIGTSTP, sigtstp_handler);
-                //Signal(SIGCHLD, sigchld_handler);
+                Signal(SIGCHLD, sigchld_handler);
                 
                 // wait for parent pgid change
                 
