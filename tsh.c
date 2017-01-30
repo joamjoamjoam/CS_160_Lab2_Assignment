@@ -233,16 +233,18 @@ void eval(char *cmdLine)
         else{
             // is process running in the background?
             
+            // block SIGCHLD to prevent race conditions
+            sigset_t blockListSet;
+            sigemptyset(&blockListSet);
+            sigaddset(&blockListSet, SIGCHLD);
+            sigprocmask(SIG_BLOCK, &blockListSet, NULL);
+            
             // run process in background and dont hold shell
             
             if((childPid = fork()) == 0){
                 // child process
                 char* iterator = commandName;
                 int absPath = 0;
-                // install signal handlers to child process.
-                //Signal(SIGINT,  sigint_handler);
-                //Signal(SIGTSTP, sigtstp_handler);
-                //Signal(SIGCHLD, sigchld_handler);
                 
                 // wait for parent pgid change
                 
@@ -263,7 +265,12 @@ void eval(char *cmdLine)
                 
                 debugLog("Child has pgid %d\n", getpgrp());
                 fflush(stdout);
-                //sleep (5); // wait for pgid change
+                
+                sleep(1); // wait for parent to add job to job list before reenabling SIGCHLD to prevent race condition
+                // reenable SIGCHLD due to inheriting of old sigset
+                
+                sigprocmask(SIG_UNBLOCK, &blockListSet, NULL);
+                
                 execve(commandName, argv, environ);
                 
                 // this only runs if execve fails
@@ -278,6 +285,8 @@ void eval(char *cmdLine)
                 setpgid(childPid, 0);
                 if (runInBackground) {
                     addjob(jobs, childPid, BG, cmdLine);
+                    // unblock SIGCHLD
+                    sigprocmask(SIG_UNBLOCK, &blockListSet, NULL);
                     printf("[%d] (%d) %s", pid2jid(childPid), childPid, cmdLine);
                 }
                 else{
