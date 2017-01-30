@@ -580,6 +580,7 @@ void waitfg(pid_t pid){
     
     if (signalingPID == -1) {
         debugLog("waitpid returned error in waitfg");
+        fflush(stdout);
         return;
     }
     else if (WIFEXITED(returnedStatus)){
