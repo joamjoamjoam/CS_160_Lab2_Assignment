@@ -631,11 +631,17 @@ void sigchld_handler(int sig)
     if (sig == SIGCHLD){
         int returnedStatus;
         int signalingPID = 0;
-        while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG)) > 0) {
+        while ((signalingPID = waitpid(0, &returnedStatus, WNOHANG)) >= -1) {
             debugLog("SIGCHLD recieved from pid: %d\n", signalingPID);
             fflush(stdout);
             
-            if (WIFEXITED(returnedStatus)){
+            if (signalingPID == -1) {
+                debugLog("In SIGCHLD waitpid error.");
+                fflush(stdout);
+                killpg(getpgid(signalingPID), SIGKILL);
+                deletejob(jobs, signalingPID);
+            }
+            else if (WIFEXITED(returnedStatus)){
                 // process terminated by exit clean up child by killig it
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 fflush(stdout);
