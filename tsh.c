@@ -243,9 +243,9 @@ void eval(char *cmdLine)
                 char* iterator = commandName;
                 int absPath = 0;
                 // install signal handlers to child process.
-                Signal(SIGINT,  sigint_handler);
-                Signal(SIGTSTP, sigtstp_handler);
-                Signal(SIGCHLD, sigchld_handler);
+                //Signal(SIGINT,  sigint_handler);
+                //Signal(SIGTSTP, sigtstp_handler);
+                //Signal(SIGCHLD, sigchld_handler);
                 
                 // wait for parent pgid change
                 
