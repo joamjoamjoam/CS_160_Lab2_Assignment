@@ -10,7 +10,7 @@
 
 
 ////// Just ONE BIG QUESTION should processes left stopped or backgrounded be killed by the shell when it exits or should they be left to other shells.
-
+// also is sleep before unblocking SIGCHLD in child process necessary?
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -266,7 +266,7 @@ void eval(char *cmdLine)
                 debugLog("Child has pgid %d\n", getpgrp());
                 fflush(stdout);
                 
-                sleep(1); // wait for parent to add job to job list before reenabling SIGCHLD to prevent race condition
+                //sleep(1); // wait for parent to add job to job list before reenabling SIGCHLD to prevent race condition
                 // reenable SIGCHLD due to inheriting of old sigset
                 
                 sigprocmask(SIG_UNBLOCK, &blockListSet, NULL);
