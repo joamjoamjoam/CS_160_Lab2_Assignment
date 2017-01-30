@@ -587,7 +587,7 @@ void waitfg(pid_t pid){
         debugLog("FG process %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
         fflush(stdout);
         deletejob(jobs, signalingPID);
-        killpg(getpgid(signalingPID), SIGTERM);
+        killpg(getpgid(signalingPID), SIGKILL);
     }
     else if(WIFSIGNALED(returnedStatus)){
         // terminated by a signal
@@ -595,7 +595,7 @@ void waitfg(pid_t pid){
         printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
         fflush(stdout);
         deletejob(jobs, signalingPID);
-        killpg(getpgid(signalingPID), SIGTERM);
+        killpg(getpgid(signalingPID), SIGKILL);
     }
     else if (WIFSTOPPED(returnedStatus)){
         printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(signalingPID),signalingPID ,WSTOPSIG(returnedStatus));
@@ -606,7 +606,7 @@ void waitfg(pid_t pid){
     else{
         debugLog("FG process %d terminated wierdly\n", signalingPID);
         fflush(stdout);
-        killpg(getpgid(signalingPID), SIGTERM);
+        killpg(getpgid(signalingPID), SIGKILL);
     }
 //    while (pid == fgpid(jobs) || fgpid(jobs) != 0) {
 //        sleep(.5);
@@ -638,7 +638,7 @@ void sigchld_handler(int sig)
                 // process terminated by exit clean up child by killig it
                 debugLog("Child %d terminated with exit status %d\n", signalingPID, WEXITSTATUS(returnedStatus));
                 fflush(stdout);
-                killpg(getpgid(signalingPID), SIGTERM);
+                killpg(getpgid(signalingPID), SIGKILL);
                 deletejob(jobs, signalingPID);
             }
             else if(WIFSIGNALED(returnedStatus)){
@@ -647,7 +647,7 @@ void sigchld_handler(int sig)
                 printf("Job [%d] (%d) terminated by signal %d\n",pid2jid(signalingPID),signalingPID,signal);
                 fflush(stdout);
                 deletejob(jobs, signalingPID);
-                killpg(getpgid(signalingPID), SIGTERM);
+                killpg(getpgid(signalingPID), SIGKILL);
             }
             else if (WIFSTOPPED(returnedStatus)){
                 debugLog("Child %d was stopped.\n", signalingPID);
@@ -658,7 +658,7 @@ void sigchld_handler(int sig)
             else{
                 debugLog("Child %d terminated wierdly\n", signalingPID);
                 fflush(stdout);
-                killpg(getpgid(signalingPID), SIGTERM);
+                killpg(getpgid(signalingPID), SIGKILL);
             }
             
         }
